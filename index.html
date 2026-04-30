@@ -12,6 +12,7 @@
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
+    --bem-color: #2c3e50; /* لون خاص لزر الشهادات */
   }
 
   [data-theme="dark"] {
@@ -59,7 +60,6 @@
     padding: 15px; max-width: 600px; margin: 0 auto;
   }
 
-  /* العداد التنازلي */
   .countdown-box {
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white; padding: 15px; border-radius: 15px;
@@ -69,7 +69,6 @@
   .timer-display { display: flex; justify-content: space-around; margin-top: 10px; }
   .timer-num { font-size: 20px; font-weight: bold; }
 
-  /* شبكة البطاقات */
   .grid-menu {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
   }
@@ -82,11 +81,11 @@
   }
   .card:active { transform: scale(0.95); }
 
-  /* تنسيق الفصول */
   .term-card {
     background: var(--accent-color); color: white;
     margin: 10px 0; padding: 20px; border-radius: 12px;
     text-align: center; font-size: 18px; cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
 
   .hidden { display: none; }
@@ -102,17 +101,17 @@
     cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px;
   }
 
+  .solution-box {
+    display: none; text-align: right; background: #f9f9f9; 
+    padding: 15px; margin-top: 15px; border-radius: 10px;
+    border-right: 4px solid #27ae60; color: #333;
+  }
+
   .insta-btn {
     background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
     color: white; text-decoration: none; display: flex;
     align-items: center; justify-content: center; padding: 12px;
     border-radius: 8px; margin-top: 10px; font-weight: bold;
-  }
-
-  .solution-box {
-    display: none; text-align: right; background: #f9f9f9; 
-    padding: 15px; margin-top: 15px; border-radius: 10px;
-    border-right: 4px solid #27ae60; color: #333;
   }
 </style>
 </head>
@@ -153,6 +152,10 @@
   <div class="term-card" onclick="showTopics('1')">📅 مواضيع الفصل الأول</div>
   <div class="term-card" onclick="showTopics('2')">📅 مواضيع الفصل الثاني</div>
   <div class="term-card" onclick="showTopics('3')">📅 مواضيع الفصل الثالث</div>
+  
+  <!-- الخانة الجديدة المضافة -->
+  <div class="term-card" style="background: var(--bem-color);" onclick="showBEMExams()">🎓 مواضيع شهادة التعليم المتوسط</div>
+  
   <button class="back-btn" onclick="showSection('home')">🔙 العودة للمواد</button>
 </div>
 
@@ -199,6 +202,19 @@
     const content = document.getElementById('topics-content');
     document.getElementById('term-title').innerText = `${currentSubjectName} - الفصل ${termNumber}`;
     
+    // محتوى افتراضي للفصول
+    content.innerHTML = `
+      <p style="text-align:center;">جاري تحضير مواضيع الفصل ${termNumber} لعام 2026...</p>
+      <p style="text-align:center; color:#777; font-size:14px;">تابعونا لتلقي التحديثات.</p>
+    `;
+    showSection('topics-page');
+  }
+
+  // دالة عرض مواضيع الشهادات الرسمية
+  function showBEMExams() {
+    const content = document.getElementById('topics-content');
+    document.getElementById('term-title').innerText = `شهادات التعليم المتوسط - ${currentSubjectName}`;
+    
     if (currentSubject === 'math') {
         content.innerHTML = `
             <div style="text-align:center;">
@@ -211,9 +227,9 @@
                 </div>
 
                 <div id="solution-section" class="solution-box">
-                    <h4 style="margin-top:0; color:#27ae60;">النتائج الرسمية (دورة 2010):</h4>
+                    <h4 style="margin-top:0; color:#27ae60;">النتائج الرسمية (دورة 2010)[cite: 1]:</h4>
                     <ul style="padding-right:20px; font-size:14px; line-height:1.8;">
-                        <li>قيمة a (التمرين الأول): <b>17</b>.</li>
+                        <li>قيمة a (التمرين الأول): <b>17</b>[cite: 1].</li>
                         <li>القاسم المشترك الأكبر PGCD: <b>20</b>[cite: 1].</li>
                         <li>التكلفة الإجمالية (المسألة): <b>199,216 دج</b>[cite: 1].</li>
                     </ul>
@@ -222,7 +238,7 @@
             </div>
         `;
     } else {
-        content.innerHTML = `<p style="text-align:center;">سيتم إضافة مواضيع ${currentSubjectName} قريباً...</p>`;
+        content.innerHTML = `<p style="text-align:center;">قريباً سيتم إضافة مواضيع الشهادات السابقة لمادة ${currentSubjectName}...</p>`;
     }
     showSection('topics-page');
   }
@@ -236,7 +252,7 @@
     showSection('terms-page');
   }
 
-  // العداد التنازلي المحدث
+  // العداد التنازلي
   const targetDate = new Date("May 19, 2026 08:00:00").getTime();
   setInterval(() => {
     const now = new Date().getTime();
