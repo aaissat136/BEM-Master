@@ -10,6 +10,7 @@
     --accent-color: #3498db;
     --danger-color: #e74c3c;
     --success-color: #27ae60;
+    --game-color: #27ae60;
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
@@ -33,17 +34,31 @@
     background: var(--primary-color);
     color: white; padding: 20px; text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; /* ضروري لتموضع الترس */
   }
 
+  /* تنسيق أيقونة الترس */
   .settings-btn {
-    position: absolute; top: 20px; left: 20px;
-    font-size: 24px; cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+  .settings-btn:hover {
+    transform: rotate(90deg);
   }
 
   header img {
-    width: 70px; height: 70px; border-radius: 50%;
-    border: 3px solid white; background: white; margin-bottom: 5px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    margin-bottom: 10px;
+    object-fit: cover;
+    background: white;
   }
 
   .container { padding: 15px; max-width: 600px; margin: 0 auto; }
@@ -52,187 +67,301 @@
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px;
   }
+  
+  .timer-display { display: flex; justify-content: space-around; margin-top: 10px; font-weight: bold; }
 
   .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .card {
     background: var(--card-bg); padding: 15px; text-align: center;
     border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    cursor: pointer; font-weight: bold; border-bottom: 4px solid var(--accent-color);
-    color: var(--text-color);
+    cursor: pointer; font-weight: bold; transition: 0.2s;
+    border-bottom: 4px solid var(--accent-color); color: var(--text-color);
+    display: flex; align-items: center; justify-content: center; min-height: 50px;
   }
 
-  .game-card { border-bottom-color: var(--success-color); background: #eafaf1; }
+  .game-card { background: #eafaf1; border-bottom: 4px solid var(--game-color); color: #1b5e20; }
   body.dark-mode .game-card { background: #1b2e23; color: #81c784; }
 
   .topic-item {
-    background: var(--card-bg); margin: 10px 0; padding: 15px;
-    border-radius: 10px; display: flex; align-items: center;
-    justify-content: space-between; border: 1px solid #ddd;
+    background: var(--card-bg); color: var(--text-color);
+    margin: 10px 0; padding: 15px; border-radius: 10px;
+    display: flex; align-items: center; cursor: pointer;
+    border: 1px solid #ddd; font-weight: bold; transition: 0.2s;
   }
-
-  .topic-info { display: flex; align-items: center; }
 
   .topic-num { 
     background: var(--primary-color); color: white; 
-    width: 30px; height: 30px; border-radius: 5px; 
+    width: 32px; height: 32px; border-radius: 50%; 
     display: flex; align-items: center; justify-content: center; 
-    margin-left: 12px; font-size: 12px;
-  }
-
-  .download-btn {
-    background: var(--success-color); color: white;
-    padding: 6px 12px; border-radius: 5px; font-size: 12px;
-    text-decoration: none; cursor: pointer; border: none;
+    margin-left: 15px; font-size: 14px;
   }
 
   .hidden { display: none; }
+  .content-box { background: var(--card-bg); padding: 20px; border-radius: 12px; }
+
   .back-btn {
     background: var(--danger-color); color: white; border: none;
     padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px;
   }
 
-  /* تنسيق قسم الشهادات */
-  .bem-badge {
-    background: #f39c12; color: white; padding: 2px 6px;
-    border-radius: 4px; font-size: 10px; margin-right: 5px;
+  .opt-btn { 
+    padding: 15px; background: var(--card-bg); border: 2px solid #ddd; 
+    border-radius: 10px; cursor: pointer; font-weight: bold; color: var(--text-color);
+    transition: 0.3s; width: 100%; margin-bottom: 8px; text-align: center;
   }
+  
+  .correct-ans { background-color: #27ae60 !important; color: white !important; }
+  .wrong-ans { background-color: #e74c3c !important; color: white !important; }
+
+  #timer-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 15px 0; }
+  #timer-fill { width: 100%; height: 100%; background: var(--game-color); transition: width 0.1s linear; }
 </style>
 </head>
 <body>
 
 <header>
+  <!-- زر الإعدادات في الزاوية -->
   <div class="settings-btn" onclick="showSection('settings-page')">⚙️</div>
-  <img src="logo.png" alt="BEM Master">
-  <h1 style="margin:0; font-size: 22px;">BEM Master</h1>
+  
+  <img src="logo.png" alt="BEM Master Logo">
+  <h1 style="margin:0;">BEM Master</h1>
 </header>
 
 <div class="container" id="home">
   <div class="countdown-box">
-    <div style="font-size: 12px;">⏳ متبقي على BEM 2026</div>
-    <div id="timer" style="display:flex; justify-content:space-around; margin-top:10px; font-weight:bold;">
-        <span id="days">00</span> يوم 
-        <span id="hours">00</span> ساعة
+    <div style="font-size: 13px;">⏳ العد التنازلي لشهادة BEM 2026</div>
+    <div class="timer-display" id="timer">
+      <div><span id="days">00</span><br><small>يوم</small></div>
+      <div><span id="hours">00</span><br><small>ساعة</small></div>
+      <div><span id="minutes">00</span><br><small>دقيقة</small></div>
+      <div><span id="seconds">00</span><br><small>ثانية</small></div>
     </div>
   </div>
 
   <div class="grid-menu">
     <div class="card" onclick="showTerms('arabic', 'اللغة العربية')">📖 العربية</div>
+    <div class="card" onclick="showTerms('islamic', 'التربية الإسلامية')">🌙 الإسلامية</div>
     <div class="card" onclick="showTerms('math', 'الرياضيات')">📐 الرياضيات</div>
     <div class="card" onclick="showTerms('physics', 'الفيزياء')">⚡ الفيزياء</div>
     <div class="card" onclick="showTerms('science', 'العلوم')">🧬 العلوم</div>
     <div class="card" onclick="showTerms('history', 'الاجتماعيات')">📜 الاجتماعيات</div>
-    <div class="card" onclick="showTerms('islamic', 'الإسلامية')">🌙 الإسلامية</div>
-    <div class="card game-card" onclick="showSection('game-play')">🎮 تحدي الذكاء</div>
+    <div class="card" onclick="showTerms('french', 'الفرنسية')">🇫🇷 الفرنسية</div>
+    <div class="card" onclick="showTerms('english', 'الإنجليزية')">🇬🇧 الإنجليزية</div>
+    <div class="card" onclick="showTerms('civic', 'المدنية')">🤝 المدنية</div>
+    <!-- التحدي في الأسفل -->
+    <div class="card game-card" onclick="showSection('game-subject-select')">🎮 تحدي الذكاء</div>
   </div>
 </div>
 
 <!-- صفحة الإعدادات -->
 <div class="container hidden" id="settings-page">
-    <div style="background:var(--card-bg); padding:20px; border-radius:12px;">
+    <div class="content-box">
         <h2 style="text-align:center;">⚙️ الإعدادات</h2>
-        <div class="topic-item" onclick="toggleDarkMode()" style="cursor:pointer;">
-            <span>🌓 الوضع الداكن</span>
+        
+        <div class="topic-item" onclick="toggleDarkMode()">
+            <div class="topic-num">🌓</div>
+            <span>الوضع الداكن (Dark Mode)</span>
         </div>
-        <div class="topic-item" onclick="window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy')" style="cursor:pointer;">
-            <span>📸 مراسلة المطور</span>
+
+        <div class="topic-item" onclick="openInstagram()">
+            <div class="topic-num">📸</div>
+            <span>خدمة المستخدم (إنستغرام)</span>
         </div>
-        <button class="back-btn" onclick="showSection('home')">🏠 العودة</button>
+
+        <button class="back-btn" onclick="showSection('home')">🏠 العودة للرئيسية</button>
     </div>
 </div>
 
-<!-- صفحة اختيار الفصل أو الشهادات -->
+<!-- صفحة اختيار مادة التحدي -->
+<div class="container hidden" id="game-subject-select">
+    <h2 style="text-align:center;">🎯 اختر مادة التحدي</h2>
+    <div class="grid-menu">
+        <div class="card" onclick="startNewGame('math')">📐 رياضيات</div>
+        <div class="card" onclick="startNewGame('physics')">⚡ فيزياء</div>
+        <div class="card" onclick="startNewGame('history')">📜 اجتماعيات</div>
+        <div class="card" onclick="startNewGame('islamic')">🌙 إسلامية</div>
+    </div>
+    <button class="back-btn" onclick="showSection('home')">🏠 الرئيسية</button>
+</div>
+
+<!-- صفحة اللعب -->
+<div class="container hidden" id="game-play">
+    <div class="content-box" style="text-align:center;">
+        <div style="display:flex; justify-content:space-between; font-weight:bold;">
+            <span>سؤال <span id="q-num">1</span>/5</span>
+            <span>النقاط: <span id="q-score">0</span></span>
+        </div>
+        <div id="timer-bar"><div id="timer-fill"></div></div>
+        <h3 id="q-text" style="margin:15px 0;">...</h3>
+        <div id="feedback"></div>
+        <div id="q-options"></div>
+        
+        <button class="back-btn" style="background:#95a5a6; margin-top:30px;" onclick="cancelGame()">🏳️ إلغاء التحدي</button>
+    </div>
+</div>
+
+<!-- صفحة النتائج -->
+<div class="container hidden" id="game-result">
+    <div class="content-box" style="text-align:center;">
+        <h2>🏁 انتهى التحدي</h2>
+        <h1 id="final-score" style="font-size:55px; color:var(--game-color);">0</h1>
+        <button class="back-btn" onclick="showSection('home')">🏠 الرئيسية</button>
+    </div>
+</div>
+
+<!-- الفصول والمواضيع -->
 <div class="container hidden" id="terms-page">
   <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
-  <div class="topic-item" style="cursor:pointer" onclick="renderExams('1')"><span>📂 مواضيع الفصل الأول</span></div>
-  <div class="topic-item" style="cursor:pointer" onclick="renderExams('2')"><span>📂 مواضيع الفصل الثاني</span></div>
-  <div class="topic-item" style="cursor:pointer" onclick="renderExams('3')"><span>📂 مواضيع الفصل الثالث</span></div>
-  <div class="topic-item" style="cursor:pointer; border: 2px solid #f39c12;" onclick="renderExams('BEM')"><span>🎓 شهادات التعليم المتوسط السابقة</span></div>
+  <div class="topic-item" onclick="showTopicsList('1')"><div class="topic-num">1</div> الفصل الأول</div>
+  <div class="topic-item" onclick="showTopicsList('2')"><div class="topic-num">2</div> الفصل الثاني</div>
+  <div class="topic-item" onclick="showTopicsList('3')"><div class="topic-num">3</div> الفصل الثالث</div>
   <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
 </div>
 
-<!-- صفحة عرض المواضيع (الاختبارات) -->
-<div class="container hidden" id="exams-list-page">
-  <h2 id="list-title" style="text-align:center;">المواضيع المتاحة</h2>
-  <div id="exams-render-area"></div>
+<div class="container hidden" id="topics-list-page">
+  <h2 id="list-title" style="text-align:center;">المواضيع</h2>
+  <div id="topics-render-area"></div>
   <button class="back-btn" onclick="showSection('terms-page')">🔙 العودة</button>
 </div>
 
 <script>
-  let currentSub = "";
+  let score = 0, qIndex = 0, timerObj, currentQs = [], lock = false;
 
-  // قاعدة بيانات المواضيع (نماذج)
-  const examsDatabase = {
-    "math": {
-        "1": ["فرض الفصل الأول نموذج 1", "اختبار الفصل الأول نموذج 2", "مسألة مقترحة في الهندسة"],
-        "2": ["اختبار الفصل الثاني 2024", "فرض محروس رقم 2"],
-        "3": ["اختبار تجريبي للفصل الثالث"],
-        "BEM": ["شهادة التعليم المتوسط 2023", "شهادة التعليم المتوسط 2022", "شهادة التعليم المتوسط 2021"]
-    },
-    "history": {
-        "1": ["اختبار الفصل الأول (تاريخ وجغرافيا)", "فرض تجريبي"],
-        "BEM": ["شهادة 2023", "شهادة 2022"]
-    }
-    // يمكنك إضافة باقي المواد بنفس الطريقة
+  const gameBank = {
+    math: [
+        {q: "ناتج جذر 144 هو:", o: ["12", "14", "10", "16"], a: "12"},
+        {q: "قيمة π التقريبية:", o: ["3.14", "3.12", "3.10", "3.16"], a: "3.14"},
+        {q: "مجموع زوايا المثلث:", o: ["180°", "90°", "360°", "270°"], a: "180°"},
+        {q: "جذر 81 هو:", o: ["9", "8", "7", "10"], a: "9"}
+    ],
+    physics: [
+        {q: "وحدة قياس شدة التيار:", o: ["الأمبير", "الفولت", "الأوم", "الواط"], a: "الأمبير"},
+        {q: "رمز الاستطاعة الكهربائية:", o: ["P", "U", "I", "R"], a: "P"}
+    ],
+    history: [
+        {q: "تاريخ الثورة الجزائرية:", o: ["1 نوفمبر 1954", "5 جويلية 1962", "20 أوت 1955"], a: "1 نوفمبر 1954"}
+    ],
+    islamic: [
+        {q: "عدد أركان الإيمان:", o: ["6", "5", "4", "7"], a: "6"}
+    ]
   };
 
   function showSection(id) {
     document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
-  }
-
-  function showTerms(subKey, subName) {
-    currentSub = subKey;
-    document.getElementById('subject-name-title').innerText = subName;
-    showSection('terms-page');
-  }
-
-  function renderExams(type) {
-    const area = document.getElementById('exams-render-area');
-    const title = document.getElementById('list-title');
-    title.innerText = type === 'BEM' ? "الشهادات السابقة" : `مواضيع الفصل ${type}`;
-    area.innerHTML = "";
-
-    const list = (examsDatabase[currentSub] && examsDatabase[currentSub][type]) || ["لا توجد مواضيع مضافة حالياً لهذه المادة."];
-
-    list.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "topic-item";
-        
-        let badge = type === 'BEM' ? '<span class="bem-badge">BEM</span>' : '';
-        
-        div.innerHTML = `
-            <div class="topic-info">
-                <div class="topic-num">${index + 1}</div>
-                <span>${badge}${item}</span>
-            </div>
-            <button class="download-btn" onclick="downloadFile('${item}')">تحميل PDF</button>
-        `;
-        area.appendChild(div);
-    });
-    showSection('exams-list-page');
-  }
-
-  function downloadFile(name) {
-    alert("سيتم بدء تحميل: " + name + "\n(ملاحظة: تحتاج لربط رابط PDF حقيقي هنا)");
-    // window.location.href = "رابط_الملف_هنا.pdf";
+    if(id !== 'game-play') clearInterval(timerObj);
   }
 
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
   }
 
-  // مؤقت BEM
-  const target = new Date("June 7, 2026 08:00:00").getTime();
+  function openInstagram() {
+    window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank');
+  }
+
+  function cancelGame() {
+    if(confirm("هل تريد مغادرة التحدي؟")) {
+        clearInterval(timerObj);
+        showSection('home');
+    }
+  }
+
+  function startNewGame(sub) {
+    const all = [...(gameBank[sub] || gameBank.math)];
+    currentQs = all.sort(() => 0.5 - Math.random()).slice(0, 5);
+    score = 0; qIndex = 0; lock = false;
+    document.getElementById('q-score').innerText = "0";
+    showSection('game-play');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    if(qIndex >= currentQs.length) { finishGame(); return; }
+    lock = false;
+    const data = currentQs[qIndex];
+    document.getElementById('q-num').innerText = qIndex + 1;
+    document.getElementById('q-text').innerText = data.q;
+    document.getElementById('feedback').innerText = "";
+    const optArea = document.getElementById('q-options');
+    optArea.innerHTML = "";
+    [...data.o].sort(() => 0.5 - Math.random()).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, data.a);
+        optArea.appendChild(btn);
+    });
+    runTimer();
+  }
+
+  function checkAnswer(btn, val, correct) {
+    if(lock) return;
+    lock = true; clearInterval(timerObj);
+    const feed = document.getElementById('feedback');
+    if(val === correct) {
+        btn.classList.add('correct-ans');
+        feed.innerText = "✅ صحيح!";
+        score++;
+        document.getElementById('q-score').innerText = score;
+    } else {
+        btn.classList.add('wrong-ans');
+        feed.innerText = "❌ خطأ!";
+        Array.from(document.querySelectorAll('.opt-btn')).forEach(b => {
+            if(b.innerText === correct) b.classList.add('correct-ans');
+        });
+    }
+    setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+  }
+
+  function runTimer() {
+    let w = 100; clearInterval(timerObj);
+    timerObj = setInterval(() => {
+        w -= 0.8;
+        document.getElementById('timer-fill').style.width = w + "%";
+        if(w <= 0) { 
+            lock = true;
+            document.getElementById('feedback').innerText = "⏰ انتهى الوقت!";
+            setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
+            clearInterval(timerObj); 
+        }
+    }, 100);
+  }
+
+  function finishGame() {
+    showSection('game-result');
+    document.getElementById('final-score').innerText = `${score}/5`;
+  }
+
+  function showTerms(subId, subName) {
+    document.getElementById('subject-name-title').innerText = subName;
+    showSection('terms-page');
+  }
+
+  function showTopicsList(termNum) {
+    const area = document.getElementById('topics-render-area');
+    document.getElementById('list-title').innerText = `مواضيع الفصل ${termNum}`;
+    area.innerHTML = "";
+    for(let i=1; i<=6; i++) {
+        const div = document.createElement('div');
+        div.className = "topic-item";
+        div.innerHTML = `<div class="topic-num">${i}</div> ملف مقترح ${i}`;
+        area.appendChild(div);
+    }
+    showSection('topics-list-page');
+  }
+
+  const target = new Date("May 19, 2026 08:00:00").getTime();
   setInterval(() => {
-    const now = new Date().getTime();
-    const diff = target - now;
-    if(diff > 0) {
-        document.getElementById("days").innerText = Math.floor(diff / 86400000);
-        document.getElementById("hours").innerText = Math.floor((diff % 86400000) / 3600000);
+    const diff = target - new Date().getTime();
+    if (diff > 0) {
+      document.getElementById("days").innerText = Math.floor(diff / 86400000);
+      document.getElementById("hours").innerText = Math.floor((diff % 86400000) / 3600000);
+      document.getElementById("minutes").innerText = Math.floor((diff % 3600000) / 60000);
+      document.getElementById("seconds").innerText = Math.floor((diff % 60000) / 1000);
     }
   }, 1000);
-
 </script>
 </body>
 </html>
