@@ -9,13 +9,13 @@
     --primary-color: #2c3e50;
     --accent-color: #3498db;
     --danger-color: #e74c3c;
+    --success-color: #27ae60;
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
-    --bem-color: #2c3e50;
   }
 
-  [data-theme="dark"] {
+  body.dark-mode {
     --bg-color: #121212;
     --text-color: #e0e0e0;
     --card-bg: #1e1e1e;
@@ -25,335 +25,214 @@
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg-color);
-    margin: 0;
-    color: var(--text-color);
+    margin: 0; color: var(--text-color);
     transition: all 0.3s ease;
   }
 
   header {
     background: var(--primary-color);
-    color: white;
-    padding: 20px;
-    text-align: center;
-    position: relative;
+    color: white; padding: 20px; text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: relative;
+  }
+
+  .settings-btn {
+    position: absolute; top: 20px; left: 20px;
+    font-size: 24px; cursor: pointer;
   }
 
   header img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 3px solid white;
-    margin-bottom: 10px;
-    object-fit: cover;
+    width: 70px; height: 70px; border-radius: 50%;
+    border: 3px solid white; background: white; margin-bottom: 5px;
   }
 
-  .settings-icon {
-    position: absolute; left: 20px; top: 20px;
-    cursor: pointer; font-size: 24px;
-  }
-
-  .container {
-    padding: 15px; max-width: 600px; margin: 0 auto;
-  }
+  .container { padding: 15px; max-width: 600px; margin: 0 auto; }
 
   .countdown-box {
     background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white; padding: 15px; border-radius: 15px;
-    text-align: center; margin-bottom: 20px;
+    color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px;
   }
-  
-  .timer-display { display: flex; justify-content: space-around; margin-top: 10px; }
 
-  .grid-menu {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-  }
+  .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .card {
     background: var(--card-bg); padding: 15px; text-align: center;
     border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    cursor: pointer; font-weight: bold; transition: 0.2s;
-    border-bottom: 4px solid var(--accent-color); color: var(--text-color);
+    cursor: pointer; font-weight: bold; border-bottom: 4px solid var(--accent-color);
+    color: var(--text-color);
   }
-  .card:active { transform: scale(0.95); }
 
-  .term-card {
-    background: var(--accent-color); color: white;
-    margin: 10px 0; padding: 20px; border-radius: 12px;
-    text-align: center; font-size: 18px; cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  .game-card { border-bottom-color: var(--success-color); background: #eafaf1; }
+  body.dark-mode .game-card { background: #1b2e23; color: #81c784; }
+
+  .topic-item {
+    background: var(--card-bg); margin: 10px 0; padding: 15px;
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: space-between; border: 1px solid #ddd;
+  }
+
+  .topic-info { display: flex; align-items: center; }
+
+  .topic-num { 
+    background: var(--primary-color); color: white; 
+    width: 30px; height: 30px; border-radius: 5px; 
+    display: flex; align-items: center; justify-content: center; 
+    margin-left: 12px; font-size: 12px;
+  }
+
+  .download-btn {
+    background: var(--success-color); color: white;
+    padding: 6px 12px; border-radius: 5px; font-size: 12px;
+    text-decoration: none; cursor: pointer; border: none;
   }
 
   .hidden { display: none; }
-
-  .content-box {
-    background: var(--card-bg); padding: 20px;
-    border-radius: 12px; line-height: 1.7;
-  }
-
   .back-btn {
     background: var(--danger-color); color: white; border: none;
-    padding: 12px; width: 100%; border-radius: 8px;
-    cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px;
+    padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px;
   }
 
-  /* تنسيق الخانات المتسلسلة (الموضوع 1، الموضوع 2...) */
-  .topic-list-item {
-    background: var(--card-bg);
-    border: 2px solid var(--accent-color);
-    padding: 15px 20px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-color);
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-  
-  .topic-list-item:hover { 
-    background: var(--accent-color); 
-    color: white;
-    transform: translateY(-2px);
-  }
-
-  .solution-box {
-    display: none; text-align: right; background: #fff; 
-    padding: 15px; margin-top: 15px; border-radius: 10px;
-    border: 1px solid #27ae60; color: #333;
-  }
-
-  .insta-btn {
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    color: white; text-decoration: none; display: flex;
-    align-items: center; justify-content: center; padding: 12px;
-    border-radius: 8px; margin-top: 10px; font-weight: bold;
+  /* تنسيق قسم الشهادات */
+  .bem-badge {
+    background: #f39c12; color: white; padding: 2px 6px;
+    border-radius: 4px; font-size: 10px; margin-right: 5px;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="settings-icon" onclick="showSection('settings')">⚙️</div>
+  <div class="settings-btn" onclick="showSection('settings-page')">⚙️</div>
   <img src="logo.png" alt="BEM Master">
-  <h1 style="margin:0;">BEM Master</h1>
+  <h1 style="margin:0; font-size: 22px;">BEM Master</h1>
 </header>
 
 <div class="container" id="home">
   <div class="countdown-box">
-    <div style="font-size: 14px;">⏳ المتبقي على شهادة التعليم المتوسط 2026</div>
-    <div class="timer-display" id="timer">
-      <div><span id="days">00</span><br><small>يوم</small></div>
-      <div><span id="hours">00</span><br><small>ساعة</small></div>
-      <div><span id="minutes">00</span><br><small>دقيقة</small></div>
-      <div><span id="seconds">00</span><br><small>ثانية</small></div>
+    <div style="font-size: 12px;">⏳ متبقي على BEM 2026</div>
+    <div id="timer" style="display:flex; justify-content:space-around; margin-top:10px; font-weight:bold;">
+        <span id="days">00</span> يوم 
+        <span id="hours">00</span> ساعة
     </div>
   </div>
 
   <div class="grid-menu">
     <div class="card" onclick="showTerms('arabic', 'اللغة العربية')">📖 العربية</div>
-    <div class="card" onclick="showTerms('islamic', 'التربية الإسلامية')">🌙 الإسلامية</div>
     <div class="card" onclick="showTerms('math', 'الرياضيات')">📐 الرياضيات</div>
     <div class="card" onclick="showTerms('physics', 'الفيزياء')">⚡ الفيزياء</div>
     <div class="card" onclick="showTerms('science', 'العلوم')">🧬 العلوم</div>
     <div class="card" onclick="showTerms('history', 'الاجتماعيات')">📜 الاجتماعيات</div>
-    <div class="card" onclick="showTerms('french', 'الفرنسية')">🇫🇷 الفرنسية</div>
-    <div class="card" onclick="showTerms('english', 'الإنجليزية')">🇬🇧 الإنجليزية</div>
-    <div class="card" onclick="showTerms('civic', 'المدنية')">🤝 المدنية</div>
+    <div class="card" onclick="showTerms('islamic', 'الإسلامية')">🌙 الإسلامية</div>
+    <div class="card game-card" onclick="showSection('game-play')">🎮 تحدي الذكاء</div>
   </div>
 </div>
 
-<div class="container hidden" id="terms-page">
-  <h2 id="subject-title">المادة</h2>
-  <div class="term-card" onclick="showTopics('1')">📅 مواضيع الفصل الأول</div>
-  <div class="term-card" onclick="showTopics('2')">📅 مواضيع الفصل الثاني</div>
-  <div class="term-card" onclick="showTopics('3')">📅 مواضيع الفصل الثالث</div>
-  <div class="term-card" style="background: var(--bem-color);" onclick="showBEMExams()">🎓 مواضيع شهادة التعليم المتوسط</div>
-  <button class="back-btn" onclick="showSection('home')">🔙 العودة للمواد</button>
-</div>
-
-<div class="container hidden" id="topics-page">
-  <h2 id="term-title">المواضيع</h2>
-  <div id="topics-content" style="margin-top: 20px;"></div>
-  <button class="back-btn" onclick="goBackToTerms()">🔙 العودة للفصول</button>
-</div>
-
-<div class="container hidden" id="view-topic-page">
-  <h2 id="view-topic-title" style="text-align:center; color:var(--primary-color);"></h2>
-  <div class="content-box" id="view-topic-body"></div>
-  <button class="back-btn" onclick="showSection('topics-page')">🔙 العودة للقائمة</button>
-</div>
-
-<div class="container hidden" id="settings">
-  <h2>⚙️ الإعدادات</h2>
-  <div class="content-box">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span>الوضع الداكن</span>
-      <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()" style="width:20px; height:20px;">
+<!-- صفحة الإعدادات -->
+<div class="container hidden" id="settings-page">
+    <div style="background:var(--card-bg); padding:20px; border-radius:12px;">
+        <h2 style="text-align:center;">⚙️ الإعدادات</h2>
+        <div class="topic-item" onclick="toggleDarkMode()" style="cursor:pointer;">
+            <span>🌓 الوضع الداكن</span>
+        </div>
+        <div class="topic-item" onclick="window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy')" style="cursor:pointer;">
+            <span>📸 مراسلة المطور</span>
+        </div>
+        <button class="back-btn" onclick="showSection('home')">🏠 العودة</button>
     </div>
-    <hr>
-    <p>خدمة المستخدم:</p>
-    <a href="https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy" target="_blank" class="insta-btn">
-      📸 Instagram: aissat_abd_aljalil
-    </a>
-  </div>
+</div>
+
+<!-- صفحة اختيار الفصل أو الشهادات -->
+<div class="container hidden" id="terms-page">
+  <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
+  <div class="topic-item" style="cursor:pointer" onclick="renderExams('1')"><span>📂 مواضيع الفصل الأول</span></div>
+  <div class="topic-item" style="cursor:pointer" onclick="renderExams('2')"><span>📂 مواضيع الفصل الثاني</span></div>
+  <div class="topic-item" style="cursor:pointer" onclick="renderExams('3')"><span>📂 مواضيع الفصل الثالث</span></div>
+  <div class="topic-item" style="cursor:pointer; border: 2px solid #f39c12;" onclick="renderExams('BEM')"><span>🎓 شهادات التعليم المتوسط السابقة</span></div>
   <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
 </div>
 
+<!-- صفحة عرض المواضيع (الاختبارات) -->
+<div class="container hidden" id="exams-list-page">
+  <h2 id="list-title" style="text-align:center;">المواضيع المتاحة</h2>
+  <div id="exams-render-area"></div>
+  <button class="back-btn" onclick="showSection('terms-page')">🔙 العودة</button>
+</div>
+
 <script>
-  let currentSubject = "";
-  let currentSubjectName = "";
+  let currentSub = "";
+
+  // قاعدة بيانات المواضيع (نماذج)
+  const examsDatabase = {
+    "math": {
+        "1": ["فرض الفصل الأول نموذج 1", "اختبار الفصل الأول نموذج 2", "مسألة مقترحة في الهندسة"],
+        "2": ["اختبار الفصل الثاني 2024", "فرض محروس رقم 2"],
+        "3": ["اختبار تجريبي للفصل الثالث"],
+        "BEM": ["شهادة التعليم المتوسط 2023", "شهادة التعليم المتوسط 2022", "شهادة التعليم المتوسط 2021"]
+    },
+    "history": {
+        "1": ["اختبار الفصل الأول (تاريخ وجغرافيا)", "فرض تجريبي"],
+        "BEM": ["شهادة 2023", "شهادة 2022"]
+    }
+    // يمكنك إضافة باقي المواد بنفس الطريقة
+  };
 
   function showSection(id) {
     document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
-    window.scrollTo(0,0);
   }
 
-  function showTerms(subjectId, subjectName) {
-    currentSubject = subjectId;
-    currentSubjectName = subjectName;
-    document.getElementById('subject-title').innerText = subjectName;
+  function showTerms(subKey, subName) {
+    currentSub = subKey;
+    document.getElementById('subject-name-title').innerText = subName;
     showSection('terms-page');
   }
 
-  // توليد قائمة المواضيع (1، 2، 3...)
-  function showTopics(termNumber) {
-    const content = document.getElementById('topics-content');
-    document.getElementById('term-title').innerText = `${currentSubjectName} - الفصل ${termNumber}`;
-    
-    let topicsList = "";
-    if (currentSubject === 'math') {
-        // يمكنك نسخ هذا الهيكل لإضافة المزيد من المواضيع
-        topicsList = `
-            <div class="topic-list-item" onclick="viewSpecificTopic('topic1')">
-                <span>📝 الموضوع 1</span>
-                <span>▶️</span>
+  function renderExams(type) {
+    const area = document.getElementById('exams-render-area');
+    const title = document.getElementById('list-title');
+    title.innerText = type === 'BEM' ? "الشهادات السابقة" : `مواضيع الفصل ${type}`;
+    area.innerHTML = "";
+
+    const list = (examsDatabase[currentSub] && examsDatabase[currentSub][type]) || ["لا توجد مواضيع مضافة حالياً لهذه المادة."];
+
+    list.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = "topic-item";
+        
+        let badge = type === 'BEM' ? '<span class="bem-badge">BEM</span>' : '';
+        
+        div.innerHTML = `
+            <div class="topic-info">
+                <div class="topic-num">${index + 1}</div>
+                <span>${badge}${item}</span>
             </div>
-            <div class="topic-list-item" onclick="viewSpecificTopic('topic2')">
-                <span>📝 الموضوع 2</span>
-                <span>▶️</span>
-            </div>
-            <div class="topic-list-item" onclick="viewSpecificTopic('topic3')">
-                <span>📝 الموضوع 3</span>
-                <span>▶️</span>
-            </div>
-            <div class="topic-list-item" onclick="viewSpecificTopic('topic4')">
-                <span>📝 الموضوع 4</span>
-                <span>▶️</span>
-            </div>
-            <div class="topic-list-item" onclick="viewSpecificTopic('topic5')">
-                <span>📝 الموضوع 5</span>
-                <span>▶️</span>
-            </div>
+            <button class="download-btn" onclick="downloadFile('${item}')">تحميل PDF</button>
         `;
-    } else {
-        topicsList = `<p style="text-align:center;">جاري إعداد قائمة المواضيع لمادة ${currentSubjectName}...</p>`;
-    }
-    
-    content.innerHTML = topicsList;
-    showSection('topics-page');
+        area.appendChild(div);
+    });
+    showSection('exams-list-page');
   }
 
-  // عرض قائمة الشهادات الرسمية
-  function showBEMExams() {
-    const content = document.getElementById('topics-content');
-    document.getElementById('term-title').innerText = `شهادات التعليم المتوسط - ${currentSubjectName}`;
-    
-    if (currentSubject === 'math') {
-        content.innerHTML = `
-            <div class="topic-list-item" onclick="viewSpecificTopic('bem2010')">
-                <span>🎓 دورة 2010</span>
-                <span>▶️</span>
-            </div>
-            <div class="topic-list-item" style="opacity:0.6; cursor:not-allowed;">
-                <span>🎓 دورة 2011</span>
-                <span>🔒</span>
-            </div>
-            <div class="topic-list-item" style="opacity:0.6; cursor:not-allowed;">
-                <span>🎓 دورة 2012</span>
-                <span>🔒</span>
-            </div>
-        `;
-    } else {
-        content.innerHTML = `<p style="text-align:center;">جاري تحضير الأرشيف...</p>`;
-    }
-    showSection('topics-page');
+  function downloadFile(name) {
+    alert("سيتم بدء تحميل: " + name + "\n(ملاحظة: تحتاج لربط رابط PDF حقيقي هنا)");
+    // window.location.href = "رابط_الملف_هنا.pdf";
   }
 
-  // عرض محتوى الموضوع عند الضغط عليه
-  function viewSpecificTopic(topicId) {
-      const body = document.getElementById('view-topic-body');
-      const title = document.getElementById('view-topic-title');
-      
-      // إعداد محتوى دورة 2010 كمثال
-      if(topicId === 'bem2010' || topicId === 'topic1') {
-          title.innerText = (topicId === 'bem2010') ? "دورة جوان 2010" : "الموضوع 1";
-          body.innerHTML = `
-            <div style="text-align:center;">
-                <img src="math2010.png" style="width:100%; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <a href="BEM-Master-Math-2010.pdf" target="_blank" style="background:#2980b9; color:white; padding:10px; text-decoration:none; border-radius:8px; flex:1;">📥 تحميل PDF</a>
-                    <button onclick="toggleSolution()" style="background:#e67e22; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; flex:1;">💡 إظهار الحل</button>
-                </div>
-                <div id="solution-section" class="solution-box">
-                    <h4 style="color:#27ae60; margin-top:0;">النتائج الرسمية:</h4>
-                    <ul style="padding-right:20px; font-size:14px; text-align:right; line-height:1.6;">
-                        <li>قيمة a: <b>17</b>[cite: 1]</li>
-                        <li>PGCD: <b>20</b>[cite: 1]</li>
-                        <li>تكلفة البلاط: <b>199,216 دج</b>[cite: 1]</li>
-                    </ul>
-                    <img src="solution2010.png" style="width:100%; border-radius:5px; margin-top:10px;">
-                </div>
-            </div>
-          `;
-      } else {
-          title.innerText = "قيد الإنجاز";
-          body.innerHTML = `<p style="text-align:center;">هذا الموضوع قيد التحضير وسيتم رفعه قريباً.</p>`;
-      }
-      
-      showSection('view-topic-page');
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
   }
 
-  function toggleSolution() {
-    const sol = document.getElementById('solution-section');
-    sol.style.display = (sol.style.display === 'none' || sol.style.display === '') ? 'block' : 'none';
-  }
-
-  function goBackToTerms() {
-    showSection('terms-page');
-  }
-
-  const targetDate = new Date("May 19, 2026 08:00:00").getTime();
+  // مؤقت BEM
+  const target = new Date("June 7, 2026 08:00:00").getTime();
   setInterval(() => {
     const now = new Date().getTime();
-    const diff = targetDate - now;
-    if (diff > 0) {
-      document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-      document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000);
+    const diff = target - now;
+    if(diff > 0) {
+        document.getElementById("days").innerText = Math.floor(diff / 86400000);
+        document.getElementById("hours").innerText = Math.floor((diff % 86400000) / 3600000);
     }
   }, 1000);
 
-  const toggle = document.getElementById('darkModeToggle');
-  if(localStorage.getItem('theme') === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    toggle.checked = true;
-  }
-  function toggleDarkMode() {
-    const theme = toggle.checked ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }
 </script>
-
 </body>
 </html>
