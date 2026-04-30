@@ -12,7 +12,7 @@
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
-    --bem-color: #2c3e50; /* لون خاص لزر الشهادات */
+    --bem-color: #2c3e50;
   }
 
   [data-theme="dark"] {
@@ -67,7 +67,6 @@
   }
   
   .timer-display { display: flex; justify-content: space-around; margin-top: 10px; }
-  .timer-num { font-size: 20px; font-weight: bold; }
 
   .grid-menu {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
@@ -101,10 +100,34 @@
     cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px;
   }
 
+  /* تنسيق الخانات المتسلسلة (الموضوع 1، الموضوع 2...) */
+  .topic-list-item {
+    background: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .topic-list-item:hover { 
+    background: var(--accent-color); 
+    color: white;
+    transform: translateY(-2px);
+  }
+
   .solution-box {
-    display: none; text-align: right; background: #f9f9f9; 
+    display: none; text-align: right; background: #fff; 
     padding: 15px; margin-top: 15px; border-radius: 10px;
-    border-right: 4px solid #27ae60; color: #333;
+    border: 1px solid #27ae60; color: #333;
   }
 
   .insta-btn {
@@ -152,17 +175,20 @@
   <div class="term-card" onclick="showTopics('1')">📅 مواضيع الفصل الأول</div>
   <div class="term-card" onclick="showTopics('2')">📅 مواضيع الفصل الثاني</div>
   <div class="term-card" onclick="showTopics('3')">📅 مواضيع الفصل الثالث</div>
-  
-  <!-- الخانة الجديدة المضافة -->
   <div class="term-card" style="background: var(--bem-color);" onclick="showBEMExams()">🎓 مواضيع شهادة التعليم المتوسط</div>
-  
   <button class="back-btn" onclick="showSection('home')">🔙 العودة للمواد</button>
 </div>
 
 <div class="container hidden" id="topics-page">
   <h2 id="term-title">المواضيع</h2>
-  <div class="content-box" id="topics-content"></div>
+  <div id="topics-content" style="margin-top: 20px;"></div>
   <button class="back-btn" onclick="goBackToTerms()">🔙 العودة للفصول</button>
+</div>
+
+<div class="container hidden" id="view-topic-page">
+  <h2 id="view-topic-title" style="text-align:center; color:var(--primary-color);"></h2>
+  <div class="content-box" id="view-topic-body"></div>
+  <button class="back-btn" onclick="showSection('topics-page')">🔙 العودة للقائمة</button>
 </div>
 
 <div class="container hidden" id="settings">
@@ -198,49 +224,102 @@
     showSection('terms-page');
   }
 
+  // توليد قائمة المواضيع (1، 2، 3...)
   function showTopics(termNumber) {
     const content = document.getElementById('topics-content');
     document.getElementById('term-title').innerText = `${currentSubjectName} - الفصل ${termNumber}`;
     
-    // محتوى افتراضي للفصول
-    content.innerHTML = `
-      <p style="text-align:center;">جاري تحضير مواضيع الفصل ${termNumber} لعام 2026...</p>
-      <p style="text-align:center; color:#777; font-size:14px;">تابعونا لتلقي التحديثات.</p>
-    `;
+    let topicsList = "";
+    if (currentSubject === 'math') {
+        // يمكنك نسخ هذا الهيكل لإضافة المزيد من المواضيع
+        topicsList = `
+            <div class="topic-list-item" onclick="viewSpecificTopic('topic1')">
+                <span>📝 الموضوع 1</span>
+                <span>▶️</span>
+            </div>
+            <div class="topic-list-item" onclick="viewSpecificTopic('topic2')">
+                <span>📝 الموضوع 2</span>
+                <span>▶️</span>
+            </div>
+            <div class="topic-list-item" onclick="viewSpecificTopic('topic3')">
+                <span>📝 الموضوع 3</span>
+                <span>▶️</span>
+            </div>
+            <div class="topic-list-item" onclick="viewSpecificTopic('topic4')">
+                <span>📝 الموضوع 4</span>
+                <span>▶️</span>
+            </div>
+            <div class="topic-list-item" onclick="viewSpecificTopic('topic5')">
+                <span>📝 الموضوع 5</span>
+                <span>▶️</span>
+            </div>
+        `;
+    } else {
+        topicsList = `<p style="text-align:center;">جاري إعداد قائمة المواضيع لمادة ${currentSubjectName}...</p>`;
+    }
+    
+    content.innerHTML = topicsList;
     showSection('topics-page');
   }
 
-  // دالة عرض مواضيع الشهادات الرسمية
+  // عرض قائمة الشهادات الرسمية
   function showBEMExams() {
     const content = document.getElementById('topics-content');
     document.getElementById('term-title').innerText = `شهادات التعليم المتوسط - ${currentSubjectName}`;
     
     if (currentSubject === 'math') {
         content.innerHTML = `
-            <div style="text-align:center;">
-                <p style="font-weight:bold;">موضوع الرياضيات - دورة جوان 2010</p>
-                <img src="math2010.png" style="width:100%; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
-                
-                <div style="display:flex; gap:10px; justify-content:center; margin-bottom:15px;">
-                    <a href="BEM-Master-Math-2010.pdf" target="_blank" style="background:#2980b9; color:white; padding:10px; text-decoration:none; border-radius:8px; font-size:14px; flex:1;">📥 تحميل PDF</a>
-                    <button onclick="toggleSolution()" style="background:#e67e22; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; font-size:14px; flex:1;">💡 إظهار الحل</button>
-                </div>
+            <div class="topic-list-item" onclick="viewSpecificTopic('bem2010')">
+                <span>🎓 دورة 2010</span>
+                <span>▶️</span>
+            </div>
+            <div class="topic-list-item" style="opacity:0.6; cursor:not-allowed;">
+                <span>🎓 دورة 2011</span>
+                <span>🔒</span>
+            </div>
+            <div class="topic-list-item" style="opacity:0.6; cursor:not-allowed;">
+                <span>🎓 دورة 2012</span>
+                <span>🔒</span>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `<p style="text-align:center;">جاري تحضير الأرشيف...</p>`;
+    }
+    showSection('topics-page');
+  }
 
+  // عرض محتوى الموضوع عند الضغط عليه
+  function viewSpecificTopic(topicId) {
+      const body = document.getElementById('view-topic-body');
+      const title = document.getElementById('view-topic-title');
+      
+      // إعداد محتوى دورة 2010 كمثال
+      if(topicId === 'bem2010' || topicId === 'topic1') {
+          title.innerText = (topicId === 'bem2010') ? "دورة جوان 2010" : "الموضوع 1";
+          body.innerHTML = `
+            <div style="text-align:center;">
+                <img src="math2010.png" style="width:100%; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <a href="BEM-Master-Math-2010.pdf" target="_blank" style="background:#2980b9; color:white; padding:10px; text-decoration:none; border-radius:8px; flex:1;">📥 تحميل PDF</a>
+                    <button onclick="toggleSolution()" style="background:#e67e22; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; flex:1;">💡 إظهار الحل</button>
+                </div>
                 <div id="solution-section" class="solution-box">
-                    <h4 style="margin-top:0; color:#27ae60;">النتائج الرسمية (دورة 2010)[cite: 1]:</h4>
-                    <ul style="padding-right:20px; font-size:14px; line-height:1.8;">
-                        <li>قيمة a (التمرين الأول): <b>17</b>[cite: 1].</li>
-                        <li>القاسم المشترك الأكبر PGCD: <b>20</b>[cite: 1].</li>
-                        <li>التكلفة الإجمالية (المسألة): <b>199,216 دج</b>[cite: 1].</li>
+                    <h4 style="color:#27ae60; margin-top:0;">النتائج الرسمية:</h4>
+                    <ul style="padding-right:20px; font-size:14px; text-align:right; line-height:1.6;">
+                        <li>قيمة a: <b>17</b>[cite: 1]</li>
+                        <li>PGCD: <b>20</b>[cite: 1]</li>
+                        <li>تكلفة البلاط: <b>199,216 دج</b>[cite: 1]</li>
                     </ul>
                     <img src="solution2010.png" style="width:100%; border-radius:5px; margin-top:10px;">
                 </div>
             </div>
-        `;
-    } else {
-        content.innerHTML = `<p style="text-align:center;">قريباً سيتم إضافة مواضيع الشهادات السابقة لمادة ${currentSubjectName}...</p>`;
-    }
-    showSection('topics-page');
+          `;
+      } else {
+          title.innerText = "قيد الإنجاز";
+          body.innerHTML = `<p style="text-align:center;">هذا الموضوع قيد التحضير وسيتم رفعه قريباً.</p>`;
+      }
+      
+      showSection('view-topic-page');
   }
 
   function toggleSolution() {
@@ -252,7 +331,6 @@
     showSection('terms-page');
   }
 
-  // العداد التنازلي
   const targetDate = new Date("May 19, 2026 08:00:00").getTime();
   setInterval(() => {
     const now = new Date().getTime();
@@ -265,7 +343,6 @@
     }
   }, 1000);
 
-  // الوضع الداكن
   const toggle = document.getElementById('darkModeToggle');
   if(localStorage.getItem('theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
