@@ -35,10 +35,9 @@
     color: white; padding: 20px; text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     display: flex; flex-direction: column; align-items: center;
-    position: relative; /* ضروري لتموضع الترس */
+    position: relative;
   }
 
-  /* تنسيق أيقونة الترس */
   .settings-btn {
     position: absolute;
     top: 20px;
@@ -80,15 +79,25 @@
     display: flex; align-items: center; justify-content: center; min-height: 50px;
   }
 
-  .game-card { background: #eafaf1; border-bottom: 4px solid var(--game-color); color: #1b5e20; }
+  /* جعل زر التحدي يملأ الفراغ (يمتد على عمودين) */
+  .game-card { 
+    background: #eafaf1; 
+    border-bottom: 4px solid var(--game-color); 
+    color: #1b5e20;
+    grid-column: span 2;
+    font-size: 1.1em;
+  }
   body.dark-mode .game-card { background: #1b2e23; color: #81c784; }
 
   .topic-item {
     background: var(--card-bg); color: var(--text-color);
     margin: 10px 0; padding: 15px; border-radius: 10px;
-    display: flex; align-items: center; cursor: pointer;
-    border: 1px solid #ddd; font-weight: bold; transition: 0.2s;
+    display: flex; align-items: center; font-weight: bold; transition: 0.2s;
+    justify-content: space-between;
+    border: 1px solid #ddd;
   }
+
+  .topic-info { display: flex; align-items: center; }
 
   .topic-num { 
     background: var(--primary-color); color: white; 
@@ -96,6 +105,37 @@
     display: flex; align-items: center; justify-content: center; 
     margin-left: 15px; font-size: 14px;
   }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .switch input { opacity: 0; width: 0; height: 0; }
+
+  .slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; width: 18px;
+    left: 4px; bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider { background-color: var(--success-color); }
+  input:checked + .slider:before { transform: translateX(20px); }
 
   .hidden { display: none; }
   .content-box { background: var(--card-bg); padding: 20px; border-radius: 12px; }
@@ -121,9 +161,7 @@
 <body>
 
 <header>
-  <!-- زر الإعدادات في الزاوية -->
   <div class="settings-btn" onclick="showSection('settings-page')">⚙️</div>
-  
   <img src="logo.png" alt="BEM Master Logo">
   <h1 style="margin:0;">BEM Master</h1>
 </header>
@@ -149,43 +187,51 @@
     <div class="card" onclick="showTerms('french', 'الفرنسية')">🇫🇷 الفرنسية</div>
     <div class="card" onclick="showTerms('english', 'الإنجليزية')">🇬🇧 الإنجليزية</div>
     <div class="card" onclick="showTerms('civic', 'المدنية')">🤝 المدنية</div>
-    <!-- التحدي في الأسفل -->
-    <div class="card game-card" onclick="showSection('game-subject-select')">🎮 تحدي الذكاء</div>
+    <div class="card" onclick="showTerms('informatics', 'الإعلام الآلي')">💻 الإعلام الآلي</div>
+    <div class="card game-card" onclick="showSection('game-subject-select')">🎮 تحدي الذكاء والمنافسة</div>
   </div>
 </div>
 
-<!-- صفحة الإعدادات -->
 <div class="container hidden" id="settings-page">
     <div class="content-box">
         <h2 style="text-align:center;">⚙️ الإعدادات</h2>
-        
-        <div class="topic-item" onclick="toggleDarkMode()">
-            <div class="topic-num">🌓</div>
-            <span>الوضع الداكن (Dark Mode)</span>
+        <div class="topic-item" style="cursor: default;">
+            <div class="topic-info">
+                <div class="topic-num">🌓</div>
+                <span>الوضع الداكن (Dark Mode)</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-checkbox" onchange="toggleDarkMode()">
+                <span class="slider"></span>
+            </label>
         </div>
-
         <div class="topic-item" onclick="openInstagram()">
-            <div class="topic-num">📸</div>
-            <span>خدمة المستخدم (إنستغرام)</span>
+            <div class="topic-info">
+                <div class="topic-num">📸</div>
+                <span>خدمة المستخدم (إنستغرام)</span>
+            </div>
         </div>
-
         <button class="back-btn" onclick="showSection('home')">🏠 العودة للرئيسية</button>
     </div>
 </div>
 
-<!-- صفحة اختيار مادة التحدي -->
 <div class="container hidden" id="game-subject-select">
     <h2 style="text-align:center;">🎯 اختر مادة التحدي</h2>
     <div class="grid-menu">
+        <div class="card" onclick="startNewGame('arabic')">📖 لغة عربية</div>
+        <div class="card" onclick="startNewGame('science')">🧬 علوم طبيعية</div>
         <div class="card" onclick="startNewGame('math')">📐 رياضيات</div>
         <div class="card" onclick="startNewGame('physics')">⚡ فيزياء</div>
         <div class="card" onclick="startNewGame('history')">📜 اجتماعيات</div>
         <div class="card" onclick="startNewGame('islamic')">🌙 إسلامية</div>
+        <div class="card" onclick="startNewGame('civic')">🤝 مدنية</div>
+        <div class="card" onclick="startNewGame('english')">🇬🇧 إنجليزية</div>
+        <div class="card" onclick="startNewGame('french')">🇫🇷 فرنسية</div>
+        <div class="card" onclick="startNewGame('informatics')">💻 إعلام آلي</div>
     </div>
     <button class="back-btn" onclick="showSection('home')">🏠 الرئيسية</button>
 </div>
 
-<!-- صفحة اللعب -->
 <div class="container hidden" id="game-play">
     <div class="content-box" style="text-align:center;">
         <div style="display:flex; justify-content:space-between; font-weight:bold;">
@@ -196,26 +242,23 @@
         <h3 id="q-text" style="margin:15px 0;">...</h3>
         <div id="feedback"></div>
         <div id="q-options"></div>
-        
         <button class="back-btn" style="background:#95a5a6; margin-top:30px;" onclick="cancelGame()">🏳️ إلغاء التحدي</button>
     </div>
 </div>
 
-<!-- صفحة النتائج -->
 <div class="container hidden" id="game-result">
     <div class="content-box" style="text-align:center;">
         <h2>🏁 انتهى التحدي</h2>
         <h1 id="final-score" style="font-size:55px; color:var(--game-color);">0</h1>
-        <button class="back-btn" onclick="showSection('home')">🏠 الرئيسية</button>
+        <button class="back-btn" onclick="showSection('game-subject-select')">🔄 عودة لمواد التحدي</button>
     </div>
 </div>
 
-<!-- الفصول والمواضيع -->
 <div class="container hidden" id="terms-page">
   <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
-  <div class="topic-item" onclick="showTopicsList('1')"><div class="topic-num">1</div> الفصل الأول</div>
-  <div class="topic-item" onclick="showTopicsList('2')"><div class="topic-num">2</div> الفصل الثاني</div>
-  <div class="topic-item" onclick="showTopicsList('3')"><div class="topic-num">3</div> الفصل الثالث</div>
+  <div class="topic-item" onclick="showTopicsList('1')"><div class="topic-info"><div class="topic-num">1</div> الفصل الأول</div></div>
+  <div class="topic-item" onclick="showTopicsList('2')"><div class="topic-info"><div class="topic-num">2</div> الفصل الثاني</div></div>
+  <div class="topic-item" onclick="showTopicsList('3')"><div class="topic-info"><div class="topic-num">3</div> الفصل الثالث</div></div>
   <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
 </div>
 
@@ -229,21 +272,56 @@
   let score = 0, qIndex = 0, timerObj, currentQs = [], lock = false;
 
   const gameBank = {
+    arabic: [
+        {q: "نوع الأسلوب في 'هل يعقل أن يُهمل المجتهد واجبه؟':", o: ["إنشائي طلبي (استفهام)", "إنشائي غير طلبي", "خبري", "أمر"], a: "إنشائي طلبي (استفهام)"},
+        {q: "نوع الصورة في 'ابتسمت الحياة في وجهه':", o: ["استعارة مكنية", "تشبيه بليغ", "استعارة تصريحية", "كناية"], a: "استعارة مكنية"},
+        {q: "ما نوع 'ما' في الجملة: 'ما أجملَ السماء!'", o: ["تعجبية", "استفهامية", "نافية", "موصولة"], a: "تعجبية"},
+        {q: "المبني للمجهول من 'كتبَ التلميذُ الدرسَ':", o: ["كُتِبَ الدرسُ", "كُتِبَ التلميذُ", "يُكتبُ الدرسُ", "كاتب الدرس"], a: "كُتِبَ الدرسُ"},
+        {q: "إعراب كلمة 'ثمرةُ' في: 'إنّ النجاحَ ثمرةُ الاجتهادِ':", o: ["خبر إنّ مرفوع", "اسم إنّ منصوب", "نعت مرفوع", "مضاف إليه"], a: "خبر إنّ مرفوع"}
+    ],
     math: [
-        {q: "ناتج جذر 144 هو:", o: ["12", "14", "10", "16"], a: "12"},
-        {q: "قيمة π التقريبية:", o: ["3.14", "3.12", "3.10", "3.16"], a: "3.14"},
-        {q: "مجموع زوايا المثلث:", o: ["180°", "90°", "360°", "270°"], a: "180°"},
-        {q: "جذر 81 هو:", o: ["9", "8", "7", "10"], a: "9"}
+        {q: "حل المعادلة: 3x - 5 = 2x + 7", o: ["x = 12", "x = 2", "x = 5", "x = 10"], a: "x = 12"},
+        {q: "حل الجملة: x+y=10 و x-y=2", o: ["x=6, y=4", "x=5, y=5", "x=7, y=3", "x=8, y=2"], a: "x=6, y=4"},
+        {q: "إذا كان f(x)=2x²، احسب f(3):", o: ["18", "12", "6", "9"], a: "18"},
+        {q: "مساحة دائرة نصف قطرها 5:", o: ["25π", "10π", "5π", "50π"], a: "25π"},
+        {q: "تحليل العبارة x² - 9:", o: ["(x-3)(x+3)", "(x-9)(x+1)", "(x-3)²", "(x+3)²"], a: "(x-3)(x+3)"}
+    ],
+    science: [
+        {q: "ما الفرق بين الوريد والشريان؟", o: ["الشريان من القلب، الوريد إليه", "الوريد من القلب، الشريان إليه", "كلاهما نفس الاتجاه", "لا يوجد فرق"], a: "الشريان من القلب، الوريد إليه"},
+        {q: "دور الدم الأساسي في الجسم:", o: ["نقل الأكسجين والمغذيات", "الهضم", "التفكير", "الحركة"], a: "نقل الأكسجين والمغذيات"},
+        {q: "ماذا يحدث عند نقص الأكسجين في الخلايا؟", o: ["يختل النشاط الحيوي", "يزداد النشاط", "لا يحدث شيء", "تنتج طاقة أكبر"], a: "يختل النشاط الحيوي"}
     ],
     physics: [
-        {q: "وحدة قياس شدة التيار:", o: ["الأمبير", "الفولت", "الأوم", "الواط"], a: "الأمبير"},
-        {q: "رمز الاستطاعة الكهربائية:", o: ["P", "U", "I", "R"], a: "P"}
+        {q: "قانون أوم هو:", o: ["U = R × I", "P = U × I", "E = P × t", "I = U + R"], a: "U = R × I"},
+        {q: "إذا كانت U=12V و R=4Ω، فإن I تساوي:", o: ["3A", "48A", "8A", "16A"], a: "3A"},
+        {q: "ماذا يحدث للمصباح إذا زادت المقاومة؟", o: ["تنقص شدة إضاءته", "تزداد إضاءته", "ينفجر", "لا يتأثر"], a: "تنقص شدة إضاءته"}
     ],
     history: [
-        {q: "تاريخ الثورة الجزائرية:", o: ["1 نوفمبر 1954", "5 جويلية 1962", "20 أوت 1955"], a: "1 نوفمبر 1954"}
+        {q: "من نتائج مؤتمر الصومام:", o: ["تنظيم الثورة عسكرياً", "اندلاع الثورة", "اكتشاف البترول", "تأسيس الهلال الأحمر"], a: "تنظيم الثورة عسكرياً"},
+        {q: "أعضاء مجموعة الـ22 هم:", o: ["مناضلون من حزب الشعب", "جنود فرنسيون", "علماء دين فقط", "رؤساء بلديات"], a: "مناضلون من حزب الشعب"}
+    ],
+    informatics: [
+        {q: "ما هو اختصار وحدة المعالجة المركزية؟", o: ["CPU", "RAM", "ROM", "GPU"], a: "CPU"},
+        {q: "أي مما يلي يعتبر وحدة إخراج؟", o: ["الشاشة", "الفأرة", "لوحة المفاتيح", "الماسح الضوئي"], a: "الشاشة"},
+        {q: "الشبكة العالمية للمعلومات تسمى:", o: ["الإنترنت", "الشبكة المحلية", "الراديوا", "الألياف البصرية"], a: "الإنترنت"},
+        {q: "أصغر وحدة لتخزين البيانات هي:", o: ["البت (Bit)", "البايت", "الكيلو", "الميغا"], a: "البت (Bit)"},
+        {q: "ذاكرة الوصول العشوائي تسمى:", o: ["RAM", "BIOS", "CPU", "HDD"], a: "RAM"}
     ],
     islamic: [
-        {q: "عدد أركان الإيمان:", o: ["6", "5", "4", "7"], a: "6"}
+        {q: "عدد أركان الإيمان:", o: ["6", "5", "4", "7"], a: "6"},
+        {q: "أول غزوة في الإسلام هي:", o: ["بدر", "أحد", "الخندق", "خيبر"], a: "بدر"}
+    ],
+    civic: [
+        {q: "تأسس الهلال الأحمر الجزائري سنة:", o: ["1956", "1954", "1962", "1945"], a: "1956"},
+        {q: "أعلى وثيقة قانونية في البلاد:", o: ["الدستور", "قانون العقوبات", "بيان أول نوفمبر", "قانون العمل"], a: "الدستور"}
+    ],
+    english: [
+        {q: "Opposite of 'Big':", o: ["Small", "Long", "Fast", "High"], a: "Small"},
+        {q: "The plural of 'Tooth' is:", o: ["Teeth", "Tooths", "Toothes", "Toothies"], a: "Teeth"}
+    ],
+    french: [
+        {q: "Le pluriel de 'Ciel':", o: ["Cieux", "Ciels", "Ciel", "Cieaux"], a: "Cieux"},
+        {q: "Antonyme de 'Vrai':", o: ["Faux", "Juste", "Bon", "Nouveau"], a: "Faux"}
     ]
   };
 
@@ -254,7 +332,12 @@
   }
 
   function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
+    const checkbox = document.getElementById('dark-mode-checkbox');
+    if (checkbox.checked) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }
 
   function openInstagram() {
@@ -312,13 +395,14 @@
             if(b.innerText === correct) b.classList.add('correct-ans');
         });
     }
-    setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+    setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
   }
 
   function runTimer() {
     let w = 100; clearInterval(timerObj);
+    // العودة لـ 10 ثواني (1% كل 100ms)
     timerObj = setInterval(() => {
-        w -= 0.8;
+        w -= 1.0; 
         document.getElementById('timer-fill').style.width = w + "%";
         if(w <= 0) { 
             lock = true;
@@ -346,7 +430,7 @@
     for(let i=1; i<=6; i++) {
         const div = document.createElement('div');
         div.className = "topic-item";
-        div.innerHTML = `<div class="topic-num">${i}</div> ملف مقترح ${i}`;
+        div.innerHTML = `<div class="topic-info"><div class="topic-num">${i}</div> ملف مقترح ${i}</div>`;
         area.appendChild(div);
     }
     showSection('topics-list-page');
