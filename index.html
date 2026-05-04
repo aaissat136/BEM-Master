@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BEM Master</title>
+<title>BEM Master | نظام التوليد الذكي</title>
 <style>
   :root {
     --primary-color: #2c3e50;
@@ -11,6 +11,7 @@
     --danger-color: #e74c3c;
     --success-color: #27ae60;
     --game-color: #27ae60;
+    --summary-color: #9b59b6;
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
@@ -28,6 +29,7 @@
     background: var(--bg-color);
     margin: 0; color: var(--text-color);
     transition: all 0.3s ease;
+    overflow-x: hidden;
   }
 
   header {
@@ -38,35 +40,39 @@
     position: relative;
   }
 
-  .settings-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    user-select: none;
-  }
-  .settings-btn:hover {
-    transform: rotate(90deg);
+  .menu-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; cursor: pointer; z-index: 1001; }
+
+  #sidebar {
+    position: fixed; top: 0; right: -280px; width: 260px; height: 100%;
+    background: var(--card-bg); box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    transition: 0.3s ease-in-out; z-index: 2000; padding: 20px;
+    display: flex; flex-direction: column;
   }
 
-  header img {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    border: 3px solid white;
-    margin-bottom: 10px;
-    object-fit: cover;
-    background: white;
+  #sidebar.active { right: 0; }
+
+  .sidebar-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none; z-index: 1500;
   }
+  .sidebar-overlay.active { display: block; }
+
+  .sidebar-item { padding: 12px; margin: 5px 0; background: var(--bg-color); border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+
+  .close-sidebar { align-self: flex-end; font-size: 24px; cursor: pointer; margin-bottom: 20px; }
+
+  header img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; object-fit: cover; background: white; }
 
   .container { padding: 15px; max-width: 600px; margin: 0 auto; }
 
-  .countdown-box {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px;
+  #motivation-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--primary-color); color: white; padding: 15px 25px; border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 3000; display: none;
+    text-align: center; font-weight: bold; width: 80%;
   }
-  
+
+  .countdown-box { background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
   .timer-display { display: flex; justify-content: space-around; margin-top: 10px; font-weight: bold; }
 
   .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -79,94 +85,82 @@
     display: flex; align-items: center; justify-content: center; min-height: 50px;
   }
 
-  /* جعل زر التحدي يملأ الفراغ (يمتد على عمودين) */
-  .game-card { 
-    background: #eafaf1; 
-    border-bottom: 4px solid var(--game-color); 
-    color: #1b5e20;
-    grid-column: span 2;
-    font-size: 1.1em;
-  }
+  .summary-card { background: #f5eef8; border-bottom: 4px solid var(--summary-color); color: #6c3483; grid-column: span 2; font-size: 1.1em; }
+  body.dark-mode .summary-card { background: #241b2e; color: #bb8fce; }
+
+  .game-card { background: #eafaf1; border-bottom: 4px solid var(--game-color); color: #1b5e20; grid-column: span 2; font-size: 1.1em; }
   body.dark-mode .game-card { background: #1b2e23; color: #81c784; }
 
   .topic-item {
-    background: var(--card-bg); color: var(--text-color);
-    margin: 10px 0; padding: 15px; border-radius: 10px;
-    display: flex; align-items: center; font-weight: bold; transition: 0.2s;
-    justify-content: space-between;
-    border: 1px solid #ddd;
+    background: var(--card-bg); color: var(--text-color); margin: 10px 0; padding: 15px; border-radius: 10px;
+    display: flex; align-items: center; font-weight: bold; justify-content: space-between; border: 1px solid #ddd;
   }
 
-  .topic-info { display: flex; align-items: center; }
+  .topic-num { background: var(--primary-color); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 15px; font-size: 14px; }
 
-  .topic-num { 
-    background: var(--primary-color); color: white; 
-    width: 32px; height: 32px; border-radius: 50%; 
-    display: flex; align-items: center; justify-content: center; 
-    margin-left: 15px; font-size: 14px;
-  }
-
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 46px;
-    height: 24px;
-    cursor: pointer;
-  }
-
+  .switch { position: relative; display: inline-block; width: 46px; height: 24px; cursor: pointer; }
   .switch input { opacity: 0; width: 0; height: 0; }
-
-  .slider {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 24px;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 18px; width: 18px;
-    left: 4px; bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-  }
-
+  .slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
   input:checked + .slider { background-color: var(--success-color); }
   input:checked + .slider:before { transform: translateX(20px); }
 
   .hidden { display: none; }
   .content-box { background: var(--card-bg); padding: 20px; border-radius: 12px; }
 
-  .back-btn {
-    background: var(--danger-color); color: white; border: none;
-    padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px;
-  }
+  .back-btn { background: var(--danger-color); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
-  .opt-btn { 
-    padding: 15px; background: var(--card-bg); border: 2px solid #ddd; 
-    border-radius: 10px; cursor: pointer; font-weight: bold; color: var(--text-color);
-    transition: 0.3s; width: 100%; margin-bottom: 8px; text-align: center;
-  }
+  .opt-btn { padding: 15px; background: var(--card-bg); border: 2px solid #ddd; border-radius: 10px; cursor: pointer; font-weight: bold; color: var(--text-color); transition: 0.3s; width: 100%; margin-bottom: 8px; text-align: center; outline: none; }
   
-  .correct-ans { background-color: #27ae60 !important; color: white !important; }
-  .wrong-ans { background-color: #e74c3c !important; color: white !important; }
+  .correct-ans { background-color: #27ae60 !important; color: white !important; border-color: #27ae60 !important; }
+  .wrong-ans { background-color: #e74c3c !important; color: white !important; border-color: #e74c3c !important; }
 
   #timer-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 15px 0; }
   #timer-fill { width: 100%; height: 100%; background: var(--game-color); transition: width 0.1s linear; }
+
+  .rev-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  .rev-table th, .rev-table td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+  .rev-table th { background-color: var(--primary-color); color: white; }
+
+  .login-box { text-align: center; padding: 40px 20px; }
+  .login-input { width: 100%; padding: 15px; margin: 15px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="settings-btn" onclick="showSection('settings-page')">⚙️</div>
-  <img src="logo.png" alt="BEM Master Logo">
+<div id="motivation-toast"></div>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div id="sidebar">
+    <div class="close-sidebar" onclick="toggleSidebar()">✕</div>
+    <div class="sidebar-item" onclick="showSection('home'); toggleSidebar();">🏠 الرئيسية</div>
+    <div class="sidebar-item">⭐ المفضلة</div>
+    <div class="sidebar-item">📥 التنزيلات</div>
+    <div class="sidebar-item">❌ أخطائي</div>
+    <div class="sidebar-item" onclick="showSection('schedule-page'); toggleSidebar();">📅 جدول المراجعة</div>
+    <div class="sidebar-item" onclick="showSection('settings-page'); toggleSidebar();">⚙️ الإعدادات</div>
+    <div class="sidebar-item">🌟 تقييم التطبيق</div>
+    <div class="sidebar-item" onclick="openInstagram()">📞 خدمة المستخدم</div>
+    <div class="sidebar-item">👨‍💻 دعم المطور</div>
+</div>
+
+<header id="main-header" class="hidden">
+  <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+  <img src="logo.png" alt="Logo">
   <h1 style="margin:0;">BEM Master</h1>
+  <div id="user-welcome" style="font-size: 12px; margin-top: 5px;"></div>
 </header>
 
-<div class="container" id="home">
+<div class="container" id="login-page">
+    <div class="content-box login-box">
+        <img src="logo.png" style="width:100px; margin-bottom:20px;">
+        <h2>مرحباً بك في BEM Master</h2>
+        <input type="text" id="username-input" class="login-input" placeholder="اسم المستخدم...">
+        <button class="back-btn" style="background:var(--success-color);" onclick="login()">دخول</button>
+    </div>
+</div>
+
+<div class="container hidden" id="home">
   <div class="countdown-box">
     <div style="font-size: 13px;">⏳ العد التنازلي لشهادة BEM 2026</div>
     <div class="timer-display" id="timer">
@@ -188,61 +182,78 @@
     <div class="card" onclick="showTerms('english', 'الإنجليزية')">🇬🇧 الإنجليزية</div>
     <div class="card" onclick="showTerms('civic', 'المدنية')">🤝 المدنية</div>
     <div class="card" onclick="showTerms('informatics', 'الإعلام الآلي')">💻 الإعلام الآلي</div>
+    <div class="card summary-card" onclick="showSection('summaries-subject-select')">📝 ملخصات الدروس</div>
     <div class="card game-card" onclick="showSection('game-subject-select')">🎮 تحدي الذكاء والمنافسة</div>
   </div>
+</div>
+
+<div class="container hidden" id="summaries-subject-select">
+    <h2 style="text-align:center;">📝 اختر مادة الملخص</h2>
+    <div class="grid-menu" id="summary-subs-list"></div>
+    <button class="back-btn" onclick="showSection('home')">🏠 العودة</button>
+</div>
+
+<div class="container hidden" id="term-type-page">
+    <h2 id="term-selection-title" style="text-align:center;">اختر النوع</h2>
+    <div class="grid-menu">
+        <div class="card" onclick="renderFinalTopics('فروض')">📝 فروض الفصل</div>
+        <div class="card" onclick="renderFinalTopics('اختبارات')">📝 اختبارات الفصل</div>
+    </div>
+    <button class="back-btn" onclick="showSection('terms-page')">🔙 العودة</button>
+</div>
+
+<div class="container hidden" id="terms-page">
+  <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
+  <div class="topic-item" onclick="handleTermClick('1')"><div class="topic-info"><div class="topic-num">1</div> الفصل الأول</div></div>
+  <div class="topic-item" onclick="handleTermClick('2')"><div class="topic-info"><div class="topic-num">2</div> الفصل الثاني</div></div>
+  <div class="topic-item" onclick="handleTermClick('3')"><div class="topic-info"><div class="topic-num">3</div> الفصل الثالث</div></div>
+  <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
+</div>
+
+<div class="container hidden" id="topics-list-page">
+  <h2 id="list-title" style="text-align:center;">المواضيع</h2>
+  <div id="topics-render-area"></div>
+  <button class="back-btn" onclick="showSection('term-type-page')">🔙 العودة</button>
 </div>
 
 <div class="container hidden" id="settings-page">
     <div class="content-box">
         <h2 style="text-align:center;">⚙️ الإعدادات</h2>
-        <div class="topic-item" style="cursor: default;">
-            <div class="topic-info">
-                <div class="topic-num">🌓</div>
-                <span>الوضع الداكن (Dark Mode)</span>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="dark-mode-checkbox" onchange="toggleDarkMode()">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="topic-item" onclick="openInstagram()">
-            <div class="topic-info">
-                <div class="topic-num">📸</div>
-                <span>خدمة المستخدم (إنستغرام)</span>
-            </div>
-        </div>
-        <button class="back-btn" onclick="showSection('home')">🏠 العودة للرئيسية</button>
+        <div class="topic-item"><div class="topic-info">🌓 الوضع الداكن</div><label class="switch"><input type="checkbox" id="dark-mode-checkbox" onchange="toggleDarkMode()"><span class="slider"></span></label></div>
+        <div class="topic-item"><div class="topic-info">🔔 إيقاف الإشعارات</div><label class="switch"><input type="checkbox" id="mute-notif-checkbox"><span class="slider"></span></label></div>
+        <button class="back-btn" style="background:#f39c12;" onclick="resetProgress()">🔄 إعادة تعيين التقدم</button>
+        <button class="back-btn" onclick="logout()">🚪 تسجيل الخروج</button>
+        <button class="back-btn" style="background:#7f8c8d;" onclick="showSection('home')">🏠 العودة</button>
+    </div>
+</div>
+
+<div class="container hidden" id="schedule-page">
+    <div class="content-box">
+        <h2 style="text-align:center;">📅 برنامج المراجعة</h2>
+        <table class="rev-table">
+            <tr><th>الفترة</th><th>المواد</th></tr>
+            <tr><td>الصباح</td><td>مواد علمية</td></tr>
+            <tr><td>المساء</td><td>مواد أدبية</td></tr>
+            <tr><td>الليل</td><td>تمارين وتطبيقات</td></tr>
+        </table>
+        <button class="back-btn" onclick="showSection('home')">🏠 العودة</button>
     </div>
 </div>
 
 <div class="container hidden" id="game-subject-select">
     <h2 style="text-align:center;">🎯 اختر مادة التحدي</h2>
-    <div class="grid-menu">
-        <div class="card" onclick="startNewGame('arabic')">📖 لغة عربية</div>
-        <div class="card" onclick="startNewGame('science')">🧬 علوم طبيعية</div>
-        <div class="card" onclick="startNewGame('math')">📐 رياضيات</div>
-        <div class="card" onclick="startNewGame('physics')">⚡ فيزياء</div>
-        <div class="card" onclick="startNewGame('history')">📜 اجتماعيات</div>
-        <div class="card" onclick="startNewGame('islamic')">🌙 إسلامية</div>
-        <div class="card" onclick="startNewGame('civic')">🤝 مدنية</div>
-        <div class="card" onclick="startNewGame('english')">🇬🇧 إنجليزية</div>
-        <div class="card" onclick="startNewGame('french')">🇫🇷 فرنسية</div>
-        <div class="card" onclick="startNewGame('informatics')">💻 إعلام آلي</div>
-    </div>
+    <div class="grid-menu" id="game-subs"></div>
     <button class="back-btn" onclick="showSection('home')">🏠 الرئيسية</button>
 </div>
 
 <div class="container hidden" id="game-play">
     <div class="content-box" style="text-align:center;">
-        <div style="display:flex; justify-content:space-between; font-weight:bold;">
-            <span>سؤال <span id="q-num">1</span>/5</span>
-            <span>النقاط: <span id="q-score">0</span></span>
-        </div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>سؤال <span id="q-num">1</span>/5</span><span>النقاط: <span id="q-score">0</span></span></div>
         <div id="timer-bar"><div id="timer-fill"></div></div>
-        <h3 id="q-text" style="margin:15px 0;">...</h3>
-        <div id="feedback"></div>
-        <div id="q-options"></div>
-        <button class="back-btn" style="background:#95a5a6; margin-top:30px;" onclick="cancelGame()">🏳️ إلغاء التحدي</button>
+        <h3 id="q-text" style="margin:15px 0; direction: ltr;">...</h3> <!-- direction:ltr for math/physics formulas -->
+        <div id="feedback" style="font-weight:bold; margin-bottom:10px; min-height: 20px;"></div>
+        <div id="q-options" style="direction: rtl;"></div>
+        <button class="back-btn" style="background:#95a5a6;" onclick="cancelGame()">🏳️ إلغاء</button>
     </div>
 </div>
 
@@ -250,190 +261,270 @@
     <div class="content-box" style="text-align:center;">
         <h2>🏁 انتهى التحدي</h2>
         <h1 id="final-score" style="font-size:55px; color:var(--game-color);">0</h1>
-        <button class="back-btn" onclick="showSection('game-subject-select')">🔄 عودة لمواد التحدي</button>
+        <div id="score-msg" style="margin-bottom: 20px; font-weight: bold;"></div>
+        <button class="back-btn" id="retry-game-btn">🔄 إعادة محاولة (أسئلة جديدة)</button>
+        <button class="back-btn" style="background:#3498db" onclick="showSection('game-subject-select')">📚 تغيير المادة</button>
     </div>
 </div>
 
-<div class="container hidden" id="terms-page">
-  <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
-  <div class="topic-item" onclick="showTopicsList('1')"><div class="topic-info"><div class="topic-num">1</div> الفصل الأول</div></div>
-  <div class="topic-item" onclick="showTopicsList('2')"><div class="topic-info"><div class="topic-num">2</div> الفصل الثاني</div></div>
-  <div class="topic-item" onclick="showTopicsList('3')"><div class="topic-info"><div class="topic-num">3</div> الفصل الثالث</div></div>
-  <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
-</div>
-
-<div class="container hidden" id="topics-list-page">
-  <h2 id="list-title" style="text-align:center;">المواضيع</h2>
-  <div id="topics-render-area"></div>
-  <button class="back-btn" onclick="showSection('terms-page')">🔙 العودة</button>
-</div>
-
 <script>
-  let score = 0, qIndex = 0, timerObj, currentQs = [], lock = false;
+  let score = 0, qIndex = 0, timerObj, currentQs = [], lock = false, activeTerm = 1, activeSub = "";
 
-  const gameBank = {
+  const subjectsData = { arabic:"عربية", math:"رياضيات", physics:"فيزياء", science:"علوم", history:"اجتماعيات", islamic:"إسلامية", civic:"مدنية", english:"إنجليزية", french:"فرنسية", informatics:"إعلام آلي" };
+
+  function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+  // --- 1. دوال التوليد الإجرائي (القوالب الذكية للرياضيات والفيزياء) ---
+
+  function generateMathEq() {
+      let a = Math.floor(Math.random() * 8) + 2; 
+      let x = Math.floor(Math.random() * 9) + 1; 
+      let b = Math.floor(Math.random() * 10) + 1;
+      let c = (a * x) + b;
+      let w1 = x + 1, w2 = x - 1, w3 = x + 2;
+      if(w2 <= 0) w2 = x + 3;
+      return { 
+          q: `أوجد قيمة x: \n ${a}x + ${b} = ${c}`, 
+          o: shuffle([x.toString(), w1.toString(), w2.toString(), w3.toString()]), 
+          a: x.toString() 
+      };
+  }
+
+  function generateMathRoot() {
+      let n = Math.floor(Math.random() * 11) + 2; // من 2 إلى 12
+      let sq = n * n;
+      return { 
+          q: `احسب الجذر التربيعي: \n √${sq}`, 
+          o: shuffle([n.toString(), (n+1).toString(), (n-1).toString(), (n+2).toString()]), 
+          a: n.toString() 
+      };
+  }
+
+  function generateMathPercentage() {
+      let percent = [10, 20, 25, 50, 75][Math.floor(Math.random() * 5)];
+      let base = (Math.floor(Math.random() * 10) + 2) * 10; // من 20 إلى 110
+      let result = (percent / 100) * base;
+      return {
+          q: `احسب النسبة: \n ${percent}% من ${base}`,
+          o: shuffle([result.toString(), (result+10).toString(), (result-5).toString(), (result*2).toString()]),
+          a: result.toString()
+      }
+  }
+
+  function generatePhysicsOhm() {
+      let R = [10, 20, 50, 100][Math.floor(Math.random() * 4)];
+      let I = Math.floor(Math.random() * 5) + 1; 
+      let U = R * I;
+      return { 
+          q: `ناقل أومي مقاومته R=${R}Ω وتياره I=${I}A. احسب التوتر U:`, 
+          o: shuffle([`${U}V`, `${U+10}V`, `${U-5}V`, `${U/2}V`]), 
+          a: `${U}V` 
+      };
+  }
+
+  function generatePhysicsSpeed() {
+      let d = (Math.floor(Math.random() * 10) + 2) * 10; // مسافة 20 إلى 110
+      let t = Math.floor(Math.random() * 5) + 2; // زمن 2 إلى 6
+      let v = (d / t).toFixed(1);
+      return {
+          q: `جسم يقطع مسافة d=${d}m خلال t=${t}s. احسب السرعة v:`,
+          o: shuffle([`${v} m/s`, `${(d*t)} m/s`, `${(d+t)} m/s`, `${(t/d).toFixed(1)} m/s`]),
+          a: `${v} m/s`
+      }
+  }
+
+  // --- 2. تصنيف القوالب حسب المادة ---
+  const dynamicTemplates = {
+      math: [generateMathEq, generateMathRoot, generateMathPercentage],
+      physics: [generatePhysicsOhm, generatePhysicsSpeed]
+  };
+
+  // --- 3. البنك الثابت للمواد الأخرى ---
+  const staticBank = {
     arabic: [
-        {q: "نوع الأسلوب في 'هل يعقل أن يُهمل المجتهد واجبه؟':", o: ["إنشائي طلبي (استفهام)", "إنشائي غير طلبي", "خبري", "أمر"], a: "إنشائي طلبي (استفهام)"},
-        {q: "نوع الصورة في 'ابتسمت الحياة في وجهه':", o: ["استعارة مكنية", "تشبيه بليغ", "استعارة تصريحية", "كناية"], a: "استعارة مكنية"},
-        {q: "ما نوع 'ما' في الجملة: 'ما أجملَ السماء!'", o: ["تعجبية", "استفهامية", "نافية", "موصولة"], a: "تعجبية"},
-        {q: "المبني للمجهول من 'كتبَ التلميذُ الدرسَ':", o: ["كُتِبَ الدرسُ", "كُتِبَ التلميذُ", "يُكتبُ الدرسُ", "كاتب الدرس"], a: "كُتِبَ الدرسُ"},
-        {q: "إعراب كلمة 'ثمرةُ' في: 'إنّ النجاحَ ثمرةُ الاجتهادِ':", o: ["خبر إنّ مرفوع", "اسم إنّ منصوب", "نعت مرفوع", "مضاف إليه"], a: "خبر إنّ مرفوع"}
-    ],
-    math: [
-        {q: "حل المعادلة: 3x - 5 = 2x + 7", o: ["x = 12", "x = 2", "x = 5", "x = 10"], a: "x = 12"},
-        {q: "حل الجملة: x+y=10 و x-y=2", o: ["x=6, y=4", "x=5, y=5", "x=7, y=3", "x=8, y=2"], a: "x=6, y=4"},
-        {q: "إذا كان f(x)=2x²، احسب f(3):", o: ["18", "12", "6", "9"], a: "18"},
-        {q: "مساحة دائرة نصف قطرها 5:", o: ["25π", "10π", "5π", "50π"], a: "25π"},
-        {q: "تحليل العبارة x² - 9:", o: ["(x-3)(x+3)", "(x-9)(x+1)", "(x-3)²", "(x+3)²"], a: "(x-3)(x+3)"}
+        {q: "الاسم الذي يدل على من وقع عليه الفعل يسمى:", o: ["اسم مفعول", "اسم فاعل", "صفة مشبهة", "صيغة مبالغة"], a: "اسم مفعول"},
+        {q: "المحسن البديعي في الجمع بين (الليل) و(النهار) هو:", o: ["طباق إيجاب", "طباق سلب", "جناس", "سجع"], a: "طباق إيجاب"},
+        {q: "إعراب كلمة (أحمد) في جملة (جاء أحمدُ):", o: ["فاعل مرفوع", "مبتدأ مرفوع", "خبر مرفوع", "مضاف إليه"], a: "فاعل مرفوع"},
+        {q: "نوع النص الذي يسرد أحداثاً ماضية هو:", o: ["سردي", "وصفي", "تفسيري", "حجاجي"], a: "سردي"},
+        {q: "الجملة (ينزل المطر) هي جملة:", o: ["فعلية", "اسمية", "شبه جملة", "ظرفية"], a: "فعلية"}
     ],
     science: [
-        {q: "ما الفرق بين الوريد والشريان؟", o: ["الشريان من القلب، الوريد إليه", "الوريد من القلب، الشريان إليه", "كلاهما نفس الاتجاه", "لا يوجد فرق"], a: "الشريان من القلب، الوريد إليه"},
-        {q: "دور الدم الأساسي في الجسم:", o: ["نقل الأكسجين والمغذيات", "الهضم", "التفكير", "الحركة"], a: "نقل الأكسجين والمغذيات"},
-        {q: "ماذا يحدث عند نقص الأكسجين في الخلايا؟", o: ["يختل النشاط الحيوي", "يزداد النشاط", "لا يحدث شيء", "تنتج طاقة أكبر"], a: "يختل النشاط الحيوي"}
-    ],
-    physics: [
-        {q: "قانون أوم هو:", o: ["U = R × I", "P = U × I", "E = P × t", "I = U + R"], a: "U = R × I"},
-        {q: "إذا كانت U=12V و R=4Ω، فإن I تساوي:", o: ["3A", "48A", "8A", "16A"], a: "3A"},
-        {q: "ماذا يحدث للمصباح إذا زادت المقاومة؟", o: ["تنقص شدة إضاءته", "تزداد إضاءته", "ينفجر", "لا يتأثر"], a: "تنقص شدة إضاءته"}
-    ],
-    history: [
-        {q: "من نتائج مؤتمر الصومام:", o: ["تنظيم الثورة عسكرياً", "اندلاع الثورة", "اكتشاف البترول", "تأسيس الهلال الأحمر"], a: "تنظيم الثورة عسكرياً"},
-        {q: "أعضاء مجموعة الـ22 هم:", o: ["مناضلون من حزب الشعب", "جنود فرنسيون", "علماء دين فقط", "رؤساء بلديات"], a: "مناضلون من حزب الشعب"}
-    ],
-    informatics: [
-        {q: "ما هو اختصار وحدة المعالجة المركزية؟", o: ["CPU", "RAM", "ROM", "GPU"], a: "CPU"},
-        {q: "أي مما يلي يعتبر وحدة إخراج؟", o: ["الشاشة", "الفأرة", "لوحة المفاتيح", "الماسح الضوئي"], a: "الشاشة"},
-        {q: "الشبكة العالمية للمعلومات تسمى:", o: ["الإنترنت", "الشبكة المحلية", "الراديوا", "الألياف البصرية"], a: "الإنترنت"},
-        {q: "أصغر وحدة لتخزين البيانات هي:", o: ["البت (Bit)", "البايت", "الكيلو", "الميغا"], a: "البت (Bit)"},
-        {q: "ذاكرة الوصول العشوائي تسمى:", o: ["RAM", "BIOS", "CPU", "HDD"], a: "RAM"}
+        {q: "الزمرة الدموية التي تعتبر (معطي عام) هي:", o: ["O", "A", "B", "AB"], a: "O"},
+        {q: "الخلية المسؤولة عن نقل غاز الأكسجين في الدم هي:", o: ["كرية الدم الحمراء", "كرية الدم البيضاء", "الصفائح الدموية", "البلازما"], a: "كرية الدم الحمراء"},
+        {q: "يتم امتصاص المغذيات في مستوى:", o: ["الزغابة المعوية", "المعدة", "المعي الغليظ", "الكبد"], a: "الزغابة المعوية"},
+        {q: "المركز العصبي المسؤول عن الأفعال الإرادية هو:", o: ["المخ", "النخاع الشوكي", "البصلة السيسائية", "المخيخ"], a: "المخ"},
+        {q: "العنصر المسؤول عن تخثر الدم هو:", o: ["الصفائح الدموية", "البلازما", "الكريات البيضاء", "الكريات الحمراء"], a: "الصفائح الدموية"}
     ],
     islamic: [
-        {q: "عدد أركان الإيمان:", o: ["6", "5", "4", "7"], a: "6"},
-        {q: "أول غزوة في الإسلام هي:", o: ["بدر", "أحد", "الخندق", "خيبر"], a: "بدر"}
+        {q: "متى كانت حجة الوداع؟", o: ["سنة 10 هـ", "سنة 8 هـ", "سنة 11 هـ", "سنة 9 هـ"], a: "سنة 10 هـ"},
+        {q: "عدد أولي العزم من الرسل هو:", o: ["خمسة", "أربعة", "ستة", "ثلاثة"], a: "خمسة"},
+        {q: "الركن السادس من أركان الإيمان هو:", o: ["الإيمان بالقدر خيره وشره", "الإيمان باليوم الآخر", "الإيمان بالرسل", "الإيمان بالملائكة"], a: "الإيمان بالقدر خيره وشره"},
+        {q: "من مبطلات الصيام:", o: ["الأكل والشرب عمداً", "النوم", "الاستحمام", "السواك"], a: "الأكل والشرب عمداً"},
+        {q: "السورة التي تسمى بـ (قلب القرآن) هي سورة:", o: ["يس", "البقرة", "الملك", "الكهف"], a: "يس"}
+    ],
+    history: [
+        {q: "تاريخ اندلاع الثورة التحريرية الجزائرية:", o: ["1 نوفمبر 1954", "5 جويلية 1962", "20 أوت 1955", "8 ماي 1945"], a: "1 نوفمبر 1954"},
+        {q: "متى انعقد مؤتمر الصومام؟", o: ["20 أوت 1956", "1 نوفمبر 1954", "5 جويلية 1962", "8 ماي 1945"], a: "20 أوت 1956"},
+        {q: "سقطت مدينة الجزائر العاصمة في يد الاحتلال الفرنسي سنة:", o: ["1830", "1832", "1847", "1871"], a: "1830"},
+        {q: "أين تقع المنطقة العسكرية الأولى (الأوراس) بقيادة من؟", o: ["مصطفى بن بولعيد", "ديدوش مراد", "كريم بلقاسم", "رابح بيطاط"], a: "مصطفى بن بولعيد"},
+        {q: "تاريخ توقيع اتفاقيات إيفيان:", o: ["18 مارس 1962", "5 جويلية 1962", "19 مارس 1962", "1 نوفمبر 1954"], a: "18 مارس 1962"}
     ],
     civic: [
-        {q: "تأسس الهلال الأحمر الجزائري سنة:", o: ["1956", "1954", "1962", "1945"], a: "1956"},
-        {q: "أعلى وثيقة قانونية في البلاد:", o: ["الدستور", "قانون العقوبات", "بيان أول نوفمبر", "قانون العمل"], a: "الدستور"}
-    ],
-    english: [
-        {q: "Opposite of 'Big':", o: ["Small", "Long", "Fast", "High"], a: "Small"},
-        {q: "The plural of 'Tooth' is:", o: ["Teeth", "Tooths", "Toothes", "Toothies"], a: "Teeth"}
+        {q: "السلطة التشريعية في الجزائر يمثلها:", o: ["البرلمان", "الحكومة", "رئيس الجمهورية", "القضاء"], a: "البرلمان"},
+        {q: "القانون الأعلى في البلاد هو:", o: ["الدستور", "قانون العقوبات", "القانون المدني", "المرسوم الرئاسي"], a: "الدستور"},
+        {q: "أعلى هيئة قضائية في الجزائر هي:", o: ["المحكمة العليا", "مجلس الدولة", "المجالس القضائية", "المحاكم الابتدائية"], a: "المحكمة العليا"},
+        {q: "تأسس الهلال الأحمر الجزائري سنة:", o: ["1956", "1962", "1954", "1945"], a: "1956"},
+        {q: "من واجبات المواطن:", o: ["احترام الدستور والقوانين", "الحق في التعليم", "حرية التعبير", "الحق في السكن"], a: "احترام الدستور والقوانين"}
     ],
     french: [
-        {q: "Le pluriel de 'Ciel':", o: ["Cieux", "Ciels", "Ciel", "Cieaux"], a: "Cieux"},
-        {q: "Antonyme de 'Vrai':", o: ["Faux", "Juste", "Bon", "Nouveau"], a: "Faux"}
+        {q: "Quel est l'antonyme du mot 'Vrai' ?", o: ["Faux", "Juste", "Correct", "Bien"], a: "Faux"},
+        {q: "Complétez : Il faut que tu _____ tes devoirs.", o: ["fasses", "fais", "fait", "faire"], a: "fasses"},
+        {q: "Quel est le connecteur qui exprime la cause ?", o: ["Parce que", "Donc", "Cependant", "Pour"], a: "Parce que"},
+        {q: "La voix passive de 'Le chat mange la souris' :", o: ["La souris est mangée par le chat", "La souris mange le chat", "Le chat a mangé la souris", "La souris a mangé le chat"], a: "La souris est mangée par le chat"},
+        {q: "Quel est le pronom relatif correct : 'L'homme _____ je vois.' ?", o: ["que", "qui", "dont", "où"], a: "que"}
+    ],
+    english: [
+        {q: "What is the synonym of 'famous'?", o: ["well-known", "unknown", "poor", "bad"], a: "well-known"},
+        {q: "Choose the correct past simple form: 'I _____ to school yesterday.'", o: ["went", "go", "going", "goes"], a: "went"},
+        {q: "Which word expresses an obligation?", o: ["must", "can", "may", "might"], a: "must"},
+        {q: "Comparative of 'good':", o: ["better", "gooder", "best", "more good"], a: "better"},
+        {q: "Complete: 'She is interested _____ reading books.'", o: ["in", "on", "at", "with"], a: "in"}
+    ],
+    informatics: [
+        {q: "البرنامج المخصص لإنشاء الجداول الحسابية هو:", o: ["Excel", "Word", "PowerPoint", "Paint"], a: "Excel"},
+        {q: "ماذا تعني اختصار LAN ؟", o: ["شبكة محلية", "شبكة واسعة", "مزود خدمة إنترنت", "وحدة معالجة مركزية"], a: "شبكة محلية"},
+        {q: "وحدة قياس سعة التخزين في الحاسوب هي:", o: ["البايت (Byte)", "البيكسل", "الهرتز", "الفولت"], a: "البايت (Byte)"},
+        {q: "الذاكرة التي تفقد بياناتها عند انقطاع التيار الكهربائي هي:", o: ["الذاكرة الحية (RAM)", "القرص الصلب", "الفلاش ديسك", "الذاكرة الميتة (ROM)"], a: "الذاكرة الحية (RAM)"},
+        {q: "من أشهر محركات البحث على الإنترنت:", o: ["Google", "Windows", "Android", "Linux"], a: "Google"}
     ]
   };
 
-  function showSection(id) {
-    document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-    if(id !== 'game-play') clearInterval(timerObj);
-  }
+  // --- 4. المحرك الرئيسي لتوليد ودمج الأسئلة ---
+  function generateChallenge(subject) {
+    activeSub = subject;
+    currentQs = [];
 
-  function toggleDarkMode() {
-    const checkbox = document.getElementById('dark-mode-checkbox');
-    if (checkbox.checked) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
+    // إذا كانت المادة تدعم التوليد الإجرائي (رياضيات أو فيزياء)
+    if (dynamicTemplates[subject]) {
+        let templates = dynamicTemplates[subject];
+        for(let i=0; i<5; i++) {
+            // سحب قالب عشوائي وتوليد سؤال جديد
+            let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+            currentQs.push(randomTemplate());
+        }
+    } 
+    // إذا كانت المادة تعتمد على البنك الثابت
+    else {
+        const allQuestions = staticBank[subject] || [{q: `أسئلة ${subjectsData[subject]} قادمة قريباً`, o: ["موافق", "-", "-", "-"], a: "موافق"}];
+        currentQs = shuffle([...allQuestions]).slice(0, 5);
+        currentQs.forEach(question => { question.o = shuffle([...question.o]); });
     }
-  }
 
-  function openInstagram() {
-    window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank');
-  }
-
-  function cancelGame() {
-    if(confirm("هل تريد مغادرة التحدي؟")) {
-        clearInterval(timerObj);
-        showSection('home');
-    }
-  }
-
-  function startNewGame(sub) {
-    const all = [...(gameBank[sub] || gameBank.math)];
-    currentQs = all.sort(() => 0.5 - Math.random()).slice(0, 5);
-    score = 0; qIndex = 0; lock = false;
+    score = 0; qIndex = 0;
     document.getElementById('q-score').innerText = "0";
     showSection('game-play');
     loadQuestion();
   }
 
+  document.getElementById('retry-game-btn').onclick = () => generateChallenge(activeSub);
+
+  function login() { const user = document.getElementById('username-input').value; if(user.trim() === "") { alert("يرجى إدخال اسمك"); return; } localStorage.setItem('bem_user', user); initApp(); }
+  function logout() { if(confirm("تسجيل الخروج؟")) { localStorage.removeItem('bem_user'); location.reload(); } }
+  function resetProgress() { if(confirm("إعادة التعيين؟")) { score = 0; alert("تم!"); } }
+
+  function initApp() {
+    const user = localStorage.getItem('bem_user');
+    if(user) {
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('main-header').classList.remove('hidden');
+        document.getElementById('user-welcome').innerText = "مرحباً، " + user;
+        showSection('home');
+        startMotivation();
+        renderSelectionLists();
+    }
+  }
+
+  const motivations = ["قرب البيام، أزدم و ما تخافش! 💪", "النجاح يستنى فيك، قرايتك هي سلاحك. 📚", "دير الثقة في روحك، راك قادر تجيبها! ✨", "الجزائر تفتخر بيك يا بطل المستقبل! 🇩🇿"];
+
+  function startMotivation() {
+    setInterval(() => {
+        if(document.getElementById('mute-notif-checkbox').checked) return;
+        const toast = document.getElementById('motivation-toast');
+        toast.innerText = motivations[Math.floor(Math.random() * motivations.length)];
+        toast.style.display = "block"; setTimeout(() => { toast.style.display = "none"; }, 4000);
+    }, 30000);
+  }
+
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+  function showSection(id) { document.querySelectorAll('.container').forEach(c => c.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); if(id !== 'game-play') clearInterval(timerObj); }
+  function toggleDarkMode() { document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-checkbox').checked); }
+
+  function renderSelectionLists() {
+      const gA = document.getElementById('game-subs'), sA = document.getElementById('summary-subs-list');
+      gA.innerHTML = ""; sA.innerHTML = "";
+      Object.keys(subjectsData).forEach(k => {
+          gA.innerHTML += `<div class="card" onclick="generateChallenge('${k}')">${subjectsData[k]}</div>`;
+          sA.innerHTML += `<div class="card" style="border-bottom-color:var(--summary-color)" onclick="alert('ملخصات ${subjectsData[k]} قيد التحميل...')">${subjectsData[k]}</div>`;
+      });
+  }
+
+  function showTerms(id, name) { document.getElementById('subject-name-title').innerText = name; showSection('terms-page'); }
+  function handleTermClick(term) { activeTerm = term; document.getElementById('term-selection-title').innerText = "الفصل " + term; showSection('term-type-page'); }
+
+  function renderFinalTopics(type) {
+    const area = document.getElementById('topics-render-area');
+    document.getElementById('list-title').innerText = `${type} الفصل ${activeTerm}`;
+    area.innerHTML = "";
+    for(let i=1; i<=3; i++) { area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num">${i}</div> ${type} مقترح ${i}</div></div>`; }
+    showSection('topics-list-page');
+  }
+
+  function openInstagram() { window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank'); }
+  function cancelGame() { if(confirm("مغادرة التحدي؟")) showSection('home'); }
+
   function loadQuestion() {
     if(qIndex >= currentQs.length) { finishGame(); return; }
-    lock = false;
-    const data = currentQs[qIndex];
+    lock = false; const d = currentQs[qIndex];
     document.getElementById('q-num').innerText = qIndex + 1;
-    document.getElementById('q-text').innerText = data.q;
+    document.getElementById('q-text').innerText = d.q;
     document.getElementById('feedback').innerText = "";
-    const optArea = document.getElementById('q-options');
-    optArea.innerHTML = "";
-    [...data.o].sort(() => 0.5 - Math.random()).forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = "opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(btn, opt, data.a);
-        optArea.appendChild(btn);
+    const opts = document.getElementById('q-options'); opts.innerHTML = "";
+    d.o.forEach(o => {
+        const b = document.createElement('button'); b.className = "opt-btn"; b.innerText = o;
+        b.onclick = () => checkAns(b, o, d.a); opts.appendChild(b);
     });
     runTimer();
   }
 
-  function checkAnswer(btn, val, correct) {
-    if(lock) return;
-    lock = true; clearInterval(timerObj);
+  function checkAns(b, v, a) {
+    if(lock) return; lock = true; clearInterval(timerObj);
     const feed = document.getElementById('feedback');
-    if(val === correct) {
-        btn.classList.add('correct-ans');
-        feed.innerText = "✅ صحيح!";
-        score++;
-        document.getElementById('q-score').innerText = score;
-    } else {
-        btn.classList.add('wrong-ans');
-        feed.innerText = "❌ خطأ!";
-        Array.from(document.querySelectorAll('.opt-btn')).forEach(b => {
-            if(b.innerText === correct) b.classList.add('correct-ans');
-        });
+    if(v === a) { 
+        b.classList.add('correct-ans'); 
+        feed.innerText = "✅ إجابة صحيحة، أحسنت!"; 
+        score++; 
+        document.getElementById('q-score').innerText = score; 
+    } else { 
+        b.classList.add('wrong-ans'); 
+        feed.innerText = "❌ إجابة خاطئة!"; 
+        Array.from(document.querySelectorAll('.opt-btn')).forEach(btn => { if(btn.innerText === a) btn.classList.add('correct-ans'); }); 
     }
-    setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
+    setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
   }
 
   function runTimer() {
     let w = 100; clearInterval(timerObj);
-    // العودة لـ 10 ثواني (1% كل 100ms)
     timerObj = setInterval(() => {
-        w -= 1.0; 
-        document.getElementById('timer-fill').style.width = w + "%";
-        if(w <= 0) { 
-            lock = true;
-            document.getElementById('feedback').innerText = "⏰ انتهى الوقت!";
-            setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
-            clearInterval(timerObj); 
-        }
-    }, 100);
+        w -= 0.5; document.getElementById('timer-fill').style.width = w + "%";
+        if(w <= 0) { lock = true; document.getElementById('feedback').innerText = "⏰ انتهى الوقت!"; setTimeout(() => { qIndex++; loadQuestion(); }, 1500); clearInterval(timerObj); }
+    }, 50);
   }
 
-  function finishGame() {
-    showSection('game-result');
-    document.getElementById('final-score').innerText = `${score}/5`;
-  }
-
-  function showTerms(subId, subName) {
-    document.getElementById('subject-name-title').innerText = subName;
-    showSection('terms-page');
-  }
-
-  function showTopicsList(termNum) {
-    const area = document.getElementById('topics-render-area');
-    document.getElementById('list-title').innerText = `مواضيع الفصل ${termNum}`;
-    area.innerHTML = "";
-    for(let i=1; i<=6; i++) {
-        const div = document.createElement('div');
-        div.className = "topic-item";
-        div.innerHTML = `<div class="topic-info"><div class="topic-num">${i}</div> ملف مقترح ${i}</div>`;
-        area.appendChild(div);
-    }
-    showSection('topics-list-page');
+  function finishGame() { 
+    showSection('game-result'); 
+    document.getElementById('final-score').innerText = `${score}/${currentQs.length}`;
+    const msg = score >= 4 ? "ممتاز! أنت جاهز للبيام 🏆" : "لا بأس، واصل المراجعة وستتحسن 📚";
+    document.getElementById('score-msg').innerText = msg;
   }
 
   const target = new Date("May 19, 2026 08:00:00").getTime();
@@ -446,6 +537,8 @@
       document.getElementById("seconds").innerText = Math.floor((diff % 60000) / 1000);
     }
   }, 1000);
+
+  window.onload = initApp;
 </script>
 </body>
 </html>
