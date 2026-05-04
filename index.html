@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BEM Master</title>
-<!-- 1. إضافة اللوجو في تبويب المتصفح -->
 <link rel="icon" type="image/png" href="logo.png">
 
 <style>
@@ -18,6 +17,7 @@
     --bg-color: #f4f4f4;
     --text-color: #333;
     --card-bg: #ffffff;
+    --transition-speed: 0.3s;
   }
 
   body.dark-mode {
@@ -27,11 +27,33 @@
     --primary-color: #000;
   }
 
+  /* --- Animations Keyframes --- */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+  .shake { animation: shake 0.3s ease-in-out; }
+  .pulse { animation: pulse 2s infinite; }
+
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg-color);
     margin: 0; color: var(--text-color);
-    transition: all 0.3s ease;
+    transition: background var(--transition-speed), color var(--transition-speed);
     overflow-x: hidden;
   }
 
@@ -41,25 +63,26 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     display: flex; flex-direction: column; align-items: center;
     position: relative;
+    transition: background 0.3s;
   }
 
-  .menu-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; cursor: pointer; z-index: 1001; }
+  .menu-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; cursor: pointer; z-index: 1001; transition: 0.2s; }
+  .menu-btn:hover { transform: scale(1.1); }
 
-  /* 2. إصلاح القائمة الجانبية: إضافة box-sizing وتعديل الإزاحة */
   #sidebar {
     position: fixed; 
     top: 0; 
-    right: -310px; /* زيادة الإزاحة لإخفاء الظل تماماً */
+    right: -310px;
     width: 260px; 
     height: 100%;
     background: var(--card-bg); 
     box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-    transition: 0.3s ease-in-out; 
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
     z-index: 2000; 
     padding: 20px;
     display: flex; 
     flex-direction: column;
-    box-sizing: border-box; /* لضمان حساب العرض مع البادينج */
+    box-sizing: border-box;
   }
 
   #sidebar.active { right: 0; }
@@ -67,10 +90,16 @@
   .sidebar-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.5); display: none; z-index: 1500;
+    backdrop-filter: blur(2px);
   }
   .sidebar-overlay.active { display: block; }
 
-  .sidebar-item { padding: 12px; margin: 5px 0; background: var(--bg-color); border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+  .sidebar-item { 
+    padding: 12px; margin: 5px 0; background: var(--bg-color); border-radius: 8px; 
+    cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px;
+    transition: 0.2s;
+  }
+  .sidebar-item:hover { background: var(--accent-color); color: white; transform: translateX(-5px); }
 
   .close-sidebar { align-self: flex-end; font-size: 24px; cursor: pointer; margin-bottom: 20px; }
 
@@ -83,6 +112,7 @@
     background: var(--primary-color); color: white; padding: 15px 25px; border-radius: 30px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 3000; display: none;
     text-align: center; font-weight: bold; width: 80%;
+    animation: fadeIn 0.3s ease;
   }
 
   .countdown-box { background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
@@ -93,10 +123,13 @@
   .card {
     background: var(--card-bg); padding: 15px; text-align: center;
     border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    cursor: pointer; font-weight: bold; transition: 0.2s;
+    cursor: pointer; font-weight: bold; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-bottom: 4px solid var(--accent-color); color: var(--text-color);
     display: flex; align-items: center; justify-content: center; min-height: 50px;
+    position: relative; overflow: hidden;
   }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+  .card:active { transform: scale(0.95); }
 
   .summary-card { background: #f5eef8; border-bottom: 4px solid var(--summary-color); color: #6c3483; grid-column: span 2; font-size: 1.1em; }
   body.dark-mode .summary-card { background: #241b2e; color: #bb8fce; }
@@ -107,9 +140,16 @@
   .topic-item {
     background: var(--card-bg); color: var(--text-color); margin: 10px 0; padding: 15px; border-radius: 10px;
     display: flex; align-items: center; font-weight: bold; justify-content: space-between; border: 1px solid #ddd;
+    cursor: pointer; transition: 0.2s;
   }
+  .topic-item:hover { background: #f9f9f9; transform: scale(1.01); border-color: var(--accent-color); }
+  body.dark-mode .topic-item:hover { background: #252525; }
+  
+  .topic-info { display: flex; align-items: center; }
 
   .topic-num { background: var(--primary-color); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 15px; font-size: 14px; }
+
+  .bem-num { background: var(--danger-color); }
 
   .switch { position: relative; display: inline-block; width: 46px; height: 24px; cursor: pointer; }
   .switch input { opacity: 0; width: 0; height: 0; }
@@ -118,14 +158,17 @@
   input:checked + .slider { background-color: var(--success-color); }
   input:checked + .slider:before { transform: translateX(20px); }
 
-  .hidden { display: none; }
+  .hidden { display: none !important; }
   .content-box { background: var(--card-bg); padding: 20px; border-radius: 12px; }
 
-  .back-btn { background: var(--danger-color); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+  .back-btn { background: var(--danger-color); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+  .back-btn:active { transform: scale(0.98); }
 
   .opt-btn { padding: 15px; background: var(--card-bg); border: 2px solid #ddd; border-radius: 10px; cursor: pointer; font-weight: bold; color: var(--text-color); transition: 0.3s; width: 100%; margin-bottom: 8px; text-align: center; outline: none; }
+  .opt-btn:hover { border-color: var(--accent-color); background: #f0f8ff; }
+  body.dark-mode .opt-btn:hover { background: #252525; }
   
-  .correct-ans { background-color: #27ae60 !important; color: white !important; border-color: #27ae60 !important; }
+  .correct-ans { background-color: #27ae60 !important; color: white !important; border-color: #27ae60 !important; transform: scale(1.05); }
   .wrong-ans { background-color: #e74c3c !important; color: white !important; border-color: #e74c3c !important; }
 
   #timer-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 15px 0; }
@@ -135,8 +178,11 @@
   .rev-table th, .rev-table td { border: 1px solid #ddd; padding: 12px; text-align: center; }
   .rev-table th { background-color: var(--primary-color); color: white; }
 
-  .login-box { text-align: center; padding: 40px 20px; }
-  .login-input { width: 100%; padding: 15px; margin: 15px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+  .login-box { text-align: center; padding: 40px 20px; animation: fadeIn 0.6s ease; }
+  .login-input { width: 100%; padding: 15px; margin: 15px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; transition: 0.3s; }
+  .login-input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
+
+  #bem-term-btn { animation: pulse 2s infinite; }
 </style>
 </head>
 <body>
@@ -174,7 +220,7 @@
 </div>
 
 <div class="container hidden" id="home">
-  <div class="countdown-box">
+  <div class="countdown-box fade-in">
     <div style="font-size: 13px;">⏳ العد التنازلي لشهادة BEM 2026</div>
     <div class="timer-display" id="timer">
       <div><span id="days">00</span><br><small>يوم</small></div>
@@ -184,7 +230,7 @@
     </div>
   </div>
 
-  <div class="grid-menu">
+  <div class="grid-menu fade-in">
     <div class="card" onclick="showTerms('arabic', 'اللغة العربية')">📖 العربية</div>
     <div class="card" onclick="showTerms('islamic', 'التربية الإسلامية')">🌙 الإسلامية</div>
     <div class="card" onclick="showTerms('math', 'الرياضيات')">📐 الرياضيات</div>
@@ -206,6 +252,15 @@
     <button class="back-btn" onclick="showSection('home')">🏠 العودة</button>
 </div>
 
+<div class="container hidden" id="terms-page">
+  <h2 id="cat-subject-title" style="text-align:center;">المادة</h2>
+  <div class="topic-item" onclick="handleTermClick('1')"><div class="topic-info"><div class="topic-num">1</div> الفصل الأول</div></div>
+  <div class="topic-item" onclick="handleTermClick('2')"><div class="topic-info"><div class="topic-num">2</div> الفصل الثاني</div></div>
+  <div class="topic-item" onclick="handleTermClick('3')"><div class="topic-info"><div class="topic-num">3</div> الفصل الثالث</div></div>
+  <div class="topic-item" id="bem-term-btn" onclick="renderBEMTopics()"><div class="topic-info"><div class="topic-num bem-num">🎓</div> شهادة التعليم المتوسط</div></div>
+  <button class="back-btn" onclick="showSection('home')">🔙 العودة للرئيسية</button>
+</div>
+
 <div class="container hidden" id="term-type-page">
     <h2 id="term-selection-title" style="text-align:center;">اختر النوع</h2>
     <div class="grid-menu">
@@ -215,18 +270,10 @@
     <button class="back-btn" onclick="showSection('terms-page')">🔙 العودة</button>
 </div>
 
-<div class="container hidden" id="terms-page">
-  <h2 id="subject-name-title" style="text-align:center;">المادة</h2>
-  <div class="topic-item" onclick="handleTermClick('1')"><div class="topic-info"><div class="topic-num">1</div> الفصل الأول</div></div>
-  <div class="topic-item" onclick="handleTermClick('2')"><div class="topic-info"><div class="topic-num">2</div> الفصل الثاني</div></div>
-  <div class="topic-item" onclick="handleTermClick('3')"><div class="topic-info"><div class="topic-num">3</div> الفصل الثالث</div></div>
-  <button class="back-btn" onclick="showSection('home')">🔙 العودة</button>
-</div>
-
 <div class="container hidden" id="topics-list-page">
   <h2 id="list-title" style="text-align:center;">المواضيع</h2>
   <div id="topics-render-area"></div>
-  <button class="back-btn" onclick="showSection('term-type-page')">🔙 العودة</button>
+  <button class="back-btn" id="topics-back-btn" onclick="showSection('term-type-page')">🔙 العودة</button>
 </div>
 
 <div class="container hidden" id="settings-page">
@@ -263,7 +310,7 @@
     <div class="content-box" style="text-align:center;">
         <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>سؤال <span id="q-num">1</span>/5</span><span>النقاط: <span id="q-score">0</span></span></div>
         <div id="timer-bar"><div id="timer-fill"></div></div>
-        <h3 id="q-text" style="margin:15px 0; direction: ltr;">...</h3> <!-- direction:ltr for math/physics formulas -->
+        <h3 id="q-text" style="margin:15px 0; direction: ltr;">...</h3> 
         <div id="feedback" style="font-weight:bold; margin-bottom:10px; min-height: 20px;"></div>
         <div id="q-options" style="direction: rtl;"></div>
         <button class="back-btn" style="background:#95a5a6;" onclick="cancelGame()">🏳️ إلغاء</button>
@@ -287,8 +334,6 @@
 
   function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-  // --- 1. دوال التوليد الإجرائي (القوالب الذكية للرياضيات والفيزياء) ---
-
   function generateMathEq() {
       let a = Math.floor(Math.random() * 8) + 2; 
       let x = Math.floor(Math.random() * 9) + 1; 
@@ -304,7 +349,7 @@
   }
 
   function generateMathRoot() {
-      let n = Math.floor(Math.random() * 11) + 2; // من 2 إلى 12
+      let n = Math.floor(Math.random() * 11) + 2; 
       let sq = n * n;
       return { 
           q: `احسب الجذر التربيعي: \n √${sq}`, 
@@ -315,7 +360,7 @@
 
   function generateMathPercentage() {
       let percent = [10, 20, 25, 50, 75][Math.floor(Math.random() * 5)];
-      let base = (Math.floor(Math.random() * 10) + 2) * 10; // من 20 إلى 110
+      let base = (Math.floor(Math.random() * 10) + 2) * 10; 
       let result = (percent / 100) * base;
       return {
           q: `احسب النسبة: \n ${percent}% من ${base}`,
@@ -336,8 +381,8 @@
   }
 
   function generatePhysicsSpeed() {
-      let d = (Math.floor(Math.random() * 10) + 2) * 10; // مسافة 20 إلى 110
-      let t = Math.floor(Math.random() * 5) + 2; // زمن 2 إلى 6
+      let d = (Math.floor(Math.random() * 10) + 2) * 10; 
+      let t = Math.floor(Math.random() * 5) + 2; 
       let v = (d / t).toFixed(1);
       return {
           q: `جسم يقطع مسافة d=${d}m خلال t=${t}s. احسب السرعة v:`,
@@ -346,13 +391,11 @@
       }
   }
 
-  // --- 2. تصنيف القوالب حسب المادة ---
   const dynamicTemplates = {
       math: [generateMathEq, generateMathRoot, generateMathPercentage],
       physics: [generatePhysicsOhm, generatePhysicsSpeed]
   };
 
-  // --- 3. البنك الثابت للمواد الأخرى ---
   const staticBank = {
     arabic: [
         {q: "الاسم الذي يدل على من وقع عليه الفعل يسمى:", o: ["اسم مفعول", "اسم فاعل", "صفة مشبهة", "صيغة مبالغة"], a: "اسم مفعول"},
@@ -412,21 +455,17 @@
     ]
   };
 
-  // --- 4. المحرك الرئيسي لتوليد ودمج الأسئلة ---
   function generateChallenge(subject) {
     activeSub = subject;
     currentQs = [];
 
-    // إذا كانت المادة تدعم التوليد الإجرائي (رياضيات أو فيزياء)
     if (dynamicTemplates[subject]) {
         let templates = dynamicTemplates[subject];
         for(let i=0; i<5; i++) {
-            // سحب قالب عشوائي وتوليد سؤال جديد
             let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
             currentQs.push(randomTemplate());
         }
     } 
-    // إذا كانت المادة تعتمد على البنك الثابت
     else {
         const allQuestions = staticBank[subject] || [{q: `أسئلة ${subjectsData[subject]} قادمة قريباً`, o: ["موافق", "-", "-", "-"], a: "موافق"}];
         currentQs = shuffle([...allQuestions]).slice(0, 5);
@@ -469,7 +508,18 @@
   }
 
   function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-  function showSection(id) { document.querySelectorAll('.container').forEach(c => c.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); if(id !== 'game-play') clearInterval(timerObj); }
+  
+  function showSection(id) { 
+    document.querySelectorAll('.container').forEach(c => {
+        c.classList.add('hidden');
+        c.classList.remove('fade-in');
+    }); 
+    const target = document.getElementById(id);
+    target.classList.remove('hidden'); 
+    target.classList.add('fade-in');
+    if(id !== 'game-play') clearInterval(timerObj); 
+  }
+
   function toggleDarkMode() { document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-checkbox').checked); }
 
   function renderSelectionLists() {
@@ -481,15 +531,48 @@
       });
   }
 
-  function showTerms(id, name) { document.getElementById('subject-name-title').innerText = name; showSection('terms-page'); }
-  function handleTermClick(term) { activeTerm = term; document.getElementById('term-selection-title').innerText = "الفصل " + term; showSection('term-type-page'); }
+  function showTerms(id, name) { 
+      document.getElementById('cat-subject-title').innerText = name; 
+      
+      const bemBtn = document.getElementById('bem-term-btn');
+      if(bemBtn) {
+          if(id === 'informatics') {
+              bemBtn.style.display = 'none'; 
+          } else {
+              bemBtn.style.display = 'flex'; 
+          }
+      }
+      showSection('terms-page'); 
+  }
+  
+  function handleTermClick(term) { 
+      activeTerm = term; 
+      document.getElementById('term-selection-title').innerText = "الفصل " + term; 
+      showSection('term-type-page'); 
+  }
 
   function renderFinalTopics(type) {
     const area = document.getElementById('topics-render-area');
     document.getElementById('list-title').innerText = `${type} الفصل ${activeTerm}`;
     area.innerHTML = "";
     for(let i=1; i<=3; i++) { area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num">${i}</div> ${type} مقترح ${i}</div></div>`; }
+    
+    document.getElementById('topics-back-btn').setAttribute('onclick', "showSection('term-type-page')");
     showSection('topics-list-page');
+  }
+
+  function renderBEMTopics() {
+      const area = document.getElementById('topics-render-area');
+      document.getElementById('list-title').innerText = "مواضيع الشهادة (BEM)";
+      area.innerHTML = "";
+      
+      const years = [2024, 2023, 2022, 2021, 2020];
+      years.forEach((year, index) => {
+          area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num bem-num">${index+1}</div> موضوع شهادة جوان ${year}</div></div>`;
+      });
+      
+      document.getElementById('topics-back-btn').setAttribute('onclick', "showSection('terms-page')");
+      showSection('topics-list-page');
   }
 
   function openInstagram() { window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank'); }
@@ -519,6 +602,7 @@
         document.getElementById('q-score').innerText = score; 
     } else { 
         b.classList.add('wrong-ans'); 
+        b.classList.add('shake'); // إضافة تأثير الاهتزاز عند الخطأ
         feed.innerText = "❌ إجابة خاطئة!"; 
         Array.from(document.querySelectorAll('.opt-btn')).forEach(btn => { if(btn.innerText === a) btn.classList.add('correct-ans'); }); 
     }
