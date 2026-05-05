@@ -183,24 +183,111 @@
   .login-input:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
 
   #bem-term-btn { animation: pulse 2s infinite; }
+
+  /* ==========================================
+     ميزات جديدة — CSS إضافي فقط
+     ========================================== */
+
+  /* شريط التقدم في الهيدر */
+  #progress-bar-wrap {
+    width: 90%; max-width: 400px; background: rgba(255,255,255,0.2);
+    border-radius: 20px; height: 10px; margin-top: 8px; overflow: hidden;
+  }
+  #progress-bar-fill {
+    height: 100%; background: var(--success-color);
+    border-radius: 20px; transition: width 0.6s ease;
+    width: 0%;
+  }
+  #progress-label {
+    font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.85);
+  }
+
+  /* توست ذكي */
+  #smart-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    color: white; padding: 13px 22px; border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 4000; display: none;
+    text-align: center; font-weight: bold; max-width: 85%;
+    animation: fadeIn 0.3s ease; font-size: 14px;
+  }
+
+  /* صفحة أخطائي */
+  .mistake-card {
+    background: var(--card-bg); border: 1px solid #ddd;
+    border-right: 5px solid var(--danger-color);
+    border-radius: 10px; padding: 15px; margin: 10px 0;
+  }
+  .mistake-card .mistake-q { font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+  .mistake-card .mistake-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .mistake-card .mistake-ans { font-size: 13px; }
+  .mistake-card .mistake-ans span { font-weight: bold; }
+  .mistake-card .del-mistake-btn {
+    background: var(--danger-color); color: white; border: none;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    margin-top: 10px; transition: 0.2s;
+  }
+  .mistake-card .del-mistake-btn:hover { opacity: 0.85; }
+  .mistakes-empty { text-align: center; padding: 40px 20px; color: #999; font-size: 18px; }
+
+  /* بحث */
+  #search-input-box {
+    width: 100%; padding: 14px; border-radius: 10px; border: 2px solid var(--accent-color);
+    font-size: 16px; box-sizing: border-box; margin-bottom: 15px;
+    background: var(--card-bg); color: var(--text-color); outline: none;
+    transition: 0.3s;
+  }
+  #search-input-box:focus { box-shadow: 0 0 8px rgba(52,152,219,0.3); }
+  .search-result-item {
+    background: var(--card-bg); border: 1px solid #ddd; border-radius: 10px;
+    padding: 12px 15px; margin: 8px 0; cursor: pointer; transition: 0.2s;
+  }
+  .search-result-item:hover { border-color: var(--accent-color); transform: scale(1.01); }
+  .search-result-item .res-subject { font-size: 11px; color: var(--accent-color); font-weight: bold; margin-bottom: 4px; }
+  .search-result-item .res-question { font-size: 14px; font-weight: bold; }
+  #search-no-result { text-align: center; color: #999; padding: 30px; display: none; }
+
+  /* ملخص التقدم في الهوم */
+  #progress-home-box {
+    background: var(--card-bg); border-radius: 12px; padding: 15px;
+    margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-right: 5px solid var(--success-color);
+  }
+  #progress-home-box h4 { margin: 0 0 10px 0; font-size: 14px; }
+  .progress-sub-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 12px; }
+  .progress-sub-bar { flex: 1; height: 6px; background: #eee; border-radius: 4px; overflow: hidden; }
+  .progress-sub-fill { height: 100%; background: var(--success-color); border-radius: 4px; transition: width 0.5s; }
+
+  /* زر رجوع ذكي */
+  #smart-back-btn {
+    position: fixed; bottom: 20px; right: 15px;
+    background: var(--primary-color); color: white;
+    border: none; border-radius: 50%; width: 46px; height: 46px;
+    font-size: 20px; cursor: pointer; z-index: 2500;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25); display: none;
+    align-items: center; justify-content: center;
+    transition: 0.2s;
+  }
+  #smart-back-btn:hover { transform: scale(1.1); }
 </style>
 </head>
 <body>
 
 <div id="motivation-toast"></div>
+
+<!-- توست ذكي جديد -->
+<div id="smart-toast"></div>
+
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="sidebar">
     <div class="close-sidebar" onclick="toggleSidebar()">✕</div>
     <div class="sidebar-item" onclick="showSection('home'); toggleSidebar();">🏠 الرئيسية</div>
-    <div class="sidebar-item">⭐ المفضلة</div>
-    <div class="sidebar-item">📥 التنزيلات</div>
-    <div class="sidebar-item">❌ أخطائي</div>
+    <div class="sidebar-item" onclick="showSection('study-progress-page'); toggleSidebar();">📊 تقدمي الدراسي</div>
+    <div class="sidebar-item" onclick="showSection('search-page'); toggleSidebar();">🔍 البحث</div>
+    <div class="sidebar-item" onclick="showSection('mistakes-page'); toggleSidebar();">❌ أخطائي</div>
     <div class="sidebar-item" onclick="showSection('schedule-page'); toggleSidebar();">📅 جدول المراجعة</div>
     <div class="sidebar-item" onclick="showSection('settings-page'); toggleSidebar();">⚙️ الإعدادات</div>
-    <div class="sidebar-item">🌟 تقييم التطبيق</div>
     <div class="sidebar-item" onclick="openInstagram()">📞 خدمة المستخدم</div>
-    <div class="sidebar-item">👨‍💻 دعم المطور</div>
 </div>
 
 <header id="main-header" class="hidden">
@@ -208,7 +295,14 @@
   <img src="logo.png" alt="Logo">
   <h1 style="margin:0;">BEM Master</h1>
   <div id="user-welcome" style="font-size: 12px; margin-top: 5px;"></div>
+  <div id="progress-bar-wrap">
+    <div id="progress-bar-fill"></div>
+  </div>
+  <div id="progress-label">التقدم: 0%</div>
 </header>
+
+<!-- زر الرجوع الذكي -->
+<button id="smart-back-btn" onclick="smartGoBack()" title="رجوع">◀</button>
 
 <div class="container" id="login-page">
     <div class="content-box login-box">
@@ -230,6 +324,12 @@
     </div>
   </div>
 
+  <!-- ملخص التقدم — مخفي من الرئيسية، يُعرض في صفحة "تقدمي الدراسي" -->
+  <div id="progress-home-box" class="fade-in" style="display:none;">
+    <h4>📊 تقدمي الدراسي</h4>
+    <div id="progress-subjects-list"></div>
+  </div>
+
   <div class="grid-menu fade-in">
     <div class="card" onclick="showTerms('arabic', 'اللغة العربية')">📖 العربية</div>
     <div class="card" onclick="showTerms('islamic', 'التربية الإسلامية')">🌙 الإسلامية</div>
@@ -244,6 +344,18 @@
     <div class="card summary-card" onclick="showSection('summaries-subject-select')">📝 ملخصات الدروس</div>
     <div class="card game-card" onclick="showSection('game-subject-select')">🎮 تحدي الذكاء والمنافسة</div>
   </div>
+</div>
+
+<!-- ===== صفحة تقدمي الدراسي (جديدة) ===== -->
+<div class="container hidden" id="study-progress-page">
+    <div class="content-box">
+        <h2 style="text-align:center;">📊 تقدمي الدراسي</h2>
+        <p style="text-align:center; font-size:13px; color:#888; margin-top:0;">نسبة إنجازك في كل مادة بناءً على التحديات</p>
+        <div id="studyProgressSection" style="overflow-x:auto;">
+            <div id="progress-subjects-list-page"></div>
+        </div>
+        <button class="back-btn" style="background:#7f8c8d; margin-top:15px;" onclick="showSection('home')">🏠 العودة</button>
+    </div>
 </div>
 
 <div class="container hidden" id="summaries-subject-select">
@@ -327,11 +439,43 @@
     </div>
 </div>
 
+<!-- ===== صفحة أخطائي (جديدة) ===== -->
+<div class="container hidden" id="mistakes-page">
+    <div class="content-box">
+        <h2 style="text-align:center;">❌ أخطائي</h2>
+        <p style="text-align:center; font-size:13px; color:#888; margin-top:0;">الأسئلة التي أجبت عليها بشكل خاطئ — راجعها وتعلم منها</p>
+        <div id="mistakes-list"></div>
+        <button class="back-btn" style="background:#e67e22; margin-top:15px;" onclick="clearAllMistakes()">🗑️ مسح جميع الأخطاء</button>
+        <button class="back-btn" style="background:#7f8c8d; margin-top:5px;" onclick="showSection('home')">🏠 العودة</button>
+    </div>
+</div>
+
+<!-- ===== صفحة البحث (جديدة) ===== -->
+<div class="container hidden" id="search-page">
+    <div class="content-box">
+        <h2 style="text-align:center;">🔍 البحث في المواد</h2>
+        <input type="text" id="search-input-box" placeholder="ابحث عن سؤال أو موضوع..." oninput="doSearch(this.value)">
+        <div id="search-results"></div>
+        <div id="search-no-result">لا توجد نتائج مطابقة</div>
+        <button class="back-btn" style="background:#7f8c8d;" onclick="showSection('home')">🏠 العودة</button>
+    </div>
+</div>
+
 <script>
+  /* ============================================================
+     المتغيرات الأساسية الأصلية
+  ============================================================ */
   let score = 0, qIndex = 0, timerObj, currentQs = [], lock = false, activeTerm = 1, activeSub = "";
 
-  const subjectsData = { arabic:"عربية", math:"رياضيات", physics:"فيزياء", science:"علوم", history:"اجتماعيات", islamic:"إسلامية", civic:"مدنية", english:"إنجليزية", french:"فرنسية", informatics:"إعلام آلي" };
+  const subjectsData = {
+    arabic:"عربية", math:"رياضيات", physics:"فيزياء", science:"علوم",
+    history:"اجتماعيات", islamic:"إسلامية", civic:"مدنية",
+    english:"إنجليزية", french:"فرنسية", informatics:"إعلام آلي"
+  };
 
+  /* ============================================================
+     مولّدات الأسئلة الديناميكية (أصلية)
+  ============================================================ */
   function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
   function generateMathEq() {
@@ -341,54 +485,31 @@
       let c = (a * x) + b;
       let w1 = x + 1, w2 = x - 1, w3 = x + 2;
       if(w2 <= 0) w2 = x + 3;
-      return { 
-          q: `أوجد قيمة x: \n ${a}x + ${b} = ${c}`, 
-          o: shuffle([x.toString(), w1.toString(), w2.toString(), w3.toString()]), 
-          a: x.toString() 
-      };
+      return { q: `أوجد قيمة x: \n ${a}x + ${b} = ${c}`, o: shuffle([x.toString(), w1.toString(), w2.toString(), w3.toString()]), a: x.toString() };
   }
 
   function generateMathRoot() {
-      let n = Math.floor(Math.random() * 11) + 2; 
-      let sq = n * n;
-      return { 
-          q: `احسب الجذر التربيعي: \n √${sq}`, 
-          o: shuffle([n.toString(), (n+1).toString(), (n-1).toString(), (n+2).toString()]), 
-          a: n.toString() 
-      };
+      let n = Math.floor(Math.random() * 11) + 2; let sq = n * n;
+      return { q: `احسب الجذر التربيعي: \n √${sq}`, o: shuffle([n.toString(), (n+1).toString(), (n-1).toString(), (n+2).toString()]), a: n.toString() };
   }
 
   function generateMathPercentage() {
       let percent = [10, 20, 25, 50, 75][Math.floor(Math.random() * 5)];
       let base = (Math.floor(Math.random() * 10) + 2) * 10; 
       let result = (percent / 100) * base;
-      return {
-          q: `احسب النسبة: \n ${percent}% من ${base}`,
-          o: shuffle([result.toString(), (result+10).toString(), (result-5).toString(), (result*2).toString()]),
-          a: result.toString()
-      }
+      return { q: `احسب النسبة: \n ${percent}% من ${base}`, o: shuffle([result.toString(), (result+10).toString(), (result-5).toString(), (result*2).toString()]), a: result.toString() };
   }
 
   function generatePhysicsOhm() {
       let R = [10, 20, 50, 100][Math.floor(Math.random() * 4)];
-      let I = Math.floor(Math.random() * 5) + 1; 
-      let U = R * I;
-      return { 
-          q: `ناقل أومي مقاومته R=${R}Ω وتياره I=${I}A. احسب التوتر U:`, 
-          o: shuffle([`${U}V`, `${U+10}V`, `${U-5}V`, `${U/2}V`]), 
-          a: `${U}V` 
-      };
+      let I = Math.floor(Math.random() * 5) + 1; let U = R * I;
+      return { q: `ناقل أومي مقاومته R=${R}Ω وتياره I=${I}A. احسب التوتر U:`, o: shuffle([`${U}V`, `${U+10}V`, `${U-5}V`, `${U/2}V`]), a: `${U}V` };
   }
 
   function generatePhysicsSpeed() {
       let d = (Math.floor(Math.random() * 10) + 2) * 10; 
-      let t = Math.floor(Math.random() * 5) + 2; 
-      let v = (d / t).toFixed(1);
-      return {
-          q: `جسم يقطع مسافة d=${d}m خلال t=${t}s. احسب السرعة v:`,
-          o: shuffle([`${v} m/s`, `${(d*t)} m/s`, `${(d+t)} m/s`, `${(t/d).toFixed(1)} m/s`]),
-          a: `${v} m/s`
-      }
+      let t = Math.floor(Math.random() * 5) + 2; let v = (d / t).toFixed(1);
+      return { q: `جسم يقطع مسافة d=${d}m خلال t=${t}s. احسب السرعة v:`, o: shuffle([`${v} m/s`, `${(d*t)} m/s`, `${(d+t)} m/s`, `${(t/d).toFixed(1)} m/s`]), a: `${v} m/s` };
   }
 
   const dynamicTemplates = {
@@ -396,6 +517,9 @@
       physics: [generatePhysicsOhm, generatePhysicsSpeed]
   };
 
+  /* ============================================================
+     بنك الأسئلة الثابتة (أصلي)
+  ============================================================ */
   const staticBank = {
     arabic: [
         {q: "الاسم الذي يدل على من وقع عليه الفعل يسمى:", o: ["اسم مفعول", "اسم فاعل", "صفة مشبهة", "صيغة مبالغة"], a: "اسم مفعول"},
@@ -455,23 +579,23 @@
     ]
   };
 
+  /* ============================================================
+     منطق اللعبة الأصلي
+  ============================================================ */
   function generateChallenge(subject) {
     activeSub = subject;
     currentQs = [];
-
     if (dynamicTemplates[subject]) {
         let templates = dynamicTemplates[subject];
         for(let i=0; i<5; i++) {
             let randomTemplate = templates[Math.floor(Math.random() * templates.length)];
             currentQs.push(randomTemplate());
         }
-    } 
-    else {
+    } else {
         const allQuestions = staticBank[subject] || [{q: `أسئلة ${subjectsData[subject]} قادمة قريباً`, o: ["موافق", "-", "-", "-"], a: "موافق"}];
         currentQs = shuffle([...allQuestions]).slice(0, 5);
         currentQs.forEach(question => { question.o = shuffle([...question.o]); });
     }
-
     score = 0; qIndex = 0;
     document.getElementById('q-score').innerText = "0";
     showSection('game-play');
@@ -480,9 +604,27 @@
 
   document.getElementById('retry-game-btn').onclick = () => generateChallenge(activeSub);
 
-  function login() { const user = document.getElementById('username-input').value; if(user.trim() === "") { alert("يرجى إدخال اسمك"); return; } localStorage.setItem('bem_user', user); initApp(); }
-  function logout() { if(confirm("تسجيل الخروج؟")) { localStorage.removeItem('bem_user'); location.reload(); } }
-  function resetProgress() { if(confirm("إعادة التعيين؟")) { score = 0; alert("تم!"); } }
+  function login() {
+    const user = document.getElementById('username-input').value;
+    if(user.trim() === "") { alert("يرجى إدخال اسمك"); return; }
+    localStorage.setItem('bem_user', user);
+    initApp();
+  }
+
+  function logout() {
+    if(confirm("تسجيل الخروج؟")) { localStorage.removeItem('bem_user'); location.reload(); }
+  }
+
+  function resetProgress() {
+    if(confirm("إعادة تعيين جميع بيانات التقدم والأخطاء؟")) {
+      ProgressManager.resetAll();
+      ErrorManager.clearAll();
+      score = 0;
+      renderProgressHome();
+      updateHeaderProgress();
+      showToast("✅ تم إعادة التعيين", "var(--success-color)");
+    }
+  }
 
   function initApp() {
     const user = localStorage.getItem('bem_user');
@@ -493,34 +635,91 @@
         showSection('home');
         startMotivation();
         renderSelectionLists();
+        renderProgressHome();
+        updateHeaderProgress();
     }
   }
 
-  const motivations = ["قرب البيام، أزدم و ما تخافش! 💪", "النجاح يستنى فيك، قرايتك هي سلاحك. 📚", "دير الثقة في روحك، راك قادر تجيبها! ✨", "الجزائر تفتخر بيك يا بطل المستقبل! 🇩🇿"];
+  const motivations = [
+    "قرب البيام، أزدم و ما تخافش! 💪",
+    "النجاح يستنى فيك، قرايتك هي سلاحك. 📚",
+    "دير الثقة في روحك، راك قادر تجيبها! ✨",
+    "الجزائر تفتخر بيك يا بطل المستقبل! 🇩🇿"
+  ];
 
   function startMotivation() {
     setInterval(() => {
         if(document.getElementById('mute-notif-checkbox').checked) return;
         const toast = document.getElementById('motivation-toast');
         toast.innerText = motivations[Math.floor(Math.random() * motivations.length)];
-        toast.style.display = "block"; setTimeout(() => { toast.style.display = "none"; }, 4000);
+        toast.style.display = "block";
+        setTimeout(() => { toast.style.display = "none"; }, 4000);
     }, 30000);
   }
 
-  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-  
-  function showSection(id) { 
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+  }
+
+  /* ============================================================
+     تاريخ التنقل — لزر الرجوع الذكي
+  ============================================================ */
+  const navHistory = [];
+
+  function showSection(id) {
+    const current = document.querySelector('.container:not(.hidden)');
+    if(current && current.id !== id) {
+      navHistory.push(current.id);
+    }
     document.querySelectorAll('.container').forEach(c => {
         c.classList.add('hidden');
         c.classList.remove('fade-in');
-    }); 
+    });
     const target = document.getElementById(id);
-    target.classList.remove('hidden'); 
+    target.classList.remove('hidden');
     target.classList.add('fade-in');
-    if(id !== 'game-play') clearInterval(timerObj); 
+    if(id !== 'game-play') clearInterval(timerObj);
+
+    // إظهار / إخفاء زر الرجوع الذكي
+    const backBtn = document.getElementById('smart-back-btn');
+    if(id === 'home' || id === 'login-page') {
+      backBtn.style.display = 'none';
+      navHistory.length = 0;
+    } else {
+      backBtn.style.display = 'flex';
+    }
   }
 
-  function toggleDarkMode() { document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-checkbox').checked); }
+  function smartGoBack() {
+    if(navHistory.length > 0) {
+      const prev = navHistory.pop();
+      // عدم إضافة الصفحة الحالية للتاريخ عند الرجوع
+      document.querySelectorAll('.container').forEach(c => {
+        c.classList.add('hidden');
+        c.classList.remove('fade-in');
+      });
+      const target = document.getElementById(prev);
+      if(target) {
+        target.classList.remove('hidden');
+        target.classList.add('fade-in');
+        if(prev !== 'game-play') clearInterval(timerObj);
+        const backBtn = document.getElementById('smart-back-btn');
+        if(prev === 'home' || prev === 'login-page') {
+          backBtn.style.display = 'none';
+        } else {
+          backBtn.style.display = 'flex';
+        }
+      }
+    } else {
+      showSection('home');
+    }
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-checkbox').checked);
+    localStorage.setItem('bem_dark', document.getElementById('dark-mode-checkbox').checked ? '1' : '0');
+  }
 
   function renderSelectionLists() {
       const gA = document.getElementById('game-subs'), sA = document.getElementById('summary-subs-list');
@@ -531,32 +730,28 @@
       });
   }
 
-  function showTerms(id, name) { 
-      document.getElementById('cat-subject-title').innerText = name; 
-      
+  function showTerms(id, name) {
+      document.getElementById('cat-subject-title').innerText = name;
       const bemBtn = document.getElementById('bem-term-btn');
       if(bemBtn) {
-          if(id === 'informatics') {
-              bemBtn.style.display = 'none'; 
-          } else {
-              bemBtn.style.display = 'flex'; 
-          }
+          bemBtn.style.display = id === 'informatics' ? 'none' : 'flex';
       }
-      showSection('terms-page'); 
+      showSection('terms-page');
   }
-  
-  function handleTermClick(term) { 
-      activeTerm = term; 
-      document.getElementById('term-selection-title').innerText = "الفصل " + term; 
-      showSection('term-type-page'); 
+
+  function handleTermClick(term) {
+      activeTerm = term;
+      document.getElementById('term-selection-title').innerText = "الفصل " + term;
+      showSection('term-type-page');
   }
 
   function renderFinalTopics(type) {
     const area = document.getElementById('topics-render-area');
     document.getElementById('list-title').innerText = `${type} الفصل ${activeTerm}`;
     area.innerHTML = "";
-    for(let i=1; i<=3; i++) { area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num">${i}</div> ${type} مقترح ${i}</div></div>`; }
-    
+    for(let i=1; i<=3; i++) {
+      area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num">${i}</div> ${type} مقترح ${i}</div></div>`;
+    }
     document.getElementById('topics-back-btn').setAttribute('onclick', "showSection('term-type-page')");
     showSection('topics-list-page');
   }
@@ -565,65 +760,103 @@
       const area = document.getElementById('topics-render-area');
       document.getElementById('list-title').innerText = "مواضيع الشهادة (BEM)";
       area.innerHTML = "";
-      
       const years = [2024, 2023, 2022, 2021, 2020];
       years.forEach((year, index) => {
           area.innerHTML += `<div class="topic-item"><div class="topic-info"><div class="topic-num bem-num">${index+1}</div> موضوع شهادة جوان ${year}</div></div>`;
       });
-      
       document.getElementById('topics-back-btn').setAttribute('onclick', "showSection('terms-page')");
       showSection('topics-list-page');
   }
 
-  function openInstagram() { window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank'); }
-  function cancelGame() { if(confirm("مغادرة التحدي؟")) showSection('home'); }
+  function openInstagram() {
+    window.open('https://www.instagram.com/aissat_abd_aljalil?igsh=bWNpaHZ5bTgzeGhy', '_blank');
+  }
+
+  function cancelGame() {
+    if(confirm("مغادرة التحدي؟")) showSection('home');
+  }
 
   function loadQuestion() {
     if(qIndex >= currentQs.length) { finishGame(); return; }
-    lock = false; const d = currentQs[qIndex];
+    lock = false;
+    const d = currentQs[qIndex];
     document.getElementById('q-num').innerText = qIndex + 1;
     document.getElementById('q-text').innerText = d.q;
     document.getElementById('feedback').innerText = "";
-    const opts = document.getElementById('q-options'); opts.innerHTML = "";
+    const opts = document.getElementById('q-options');
+    opts.innerHTML = "";
     d.o.forEach(o => {
-        const b = document.createElement('button'); b.className = "opt-btn"; b.innerText = o;
-        b.onclick = () => checkAns(b, o, d.a); opts.appendChild(b);
+        const b = document.createElement('button');
+        b.className = "opt-btn";
+        b.innerText = o;
+        b.onclick = () => checkAns(b, o, d.a, d);
+        opts.appendChild(b);
     });
     runTimer();
   }
 
-  function checkAns(b, v, a) {
-    if(lock) return; lock = true; clearInterval(timerObj);
+  /* تم تعديل checkAns لحفظ الأخطاء */
+  function checkAns(b, v, a, questionData) {
+    if(lock) return;
+    lock = true;
+    clearInterval(timerObj);
     const feed = document.getElementById('feedback');
-    if(v === a) { 
-        b.classList.add('correct-ans'); 
-        feed.innerText = "✅ إجابة صحيحة، أحسنت!"; 
-        score++; 
-        document.getElementById('q-score').innerText = score; 
-    } else { 
-        b.classList.add('wrong-ans'); 
-        b.classList.add('shake'); // إضافة تأثير الاهتزاز عند الخطأ
-        feed.innerText = "❌ إجابة خاطئة!"; 
-        Array.from(document.querySelectorAll('.opt-btn')).forEach(btn => { if(btn.innerText === a) btn.classList.add('correct-ans'); }); 
+    if(v === a) {
+        b.classList.add('correct-ans');
+        feed.innerText = "✅ إجابة صحيحة، أحسنت!";
+        score++;
+        document.getElementById('q-score').innerText = score;
+    } else {
+        b.classList.add('wrong-ans');
+        b.classList.add('shake');
+        feed.innerText = "❌ إجابة خاطئة!";
+        Array.from(document.querySelectorAll('.opt-btn')).forEach(btn => {
+            if(btn.innerText === a) btn.classList.add('correct-ans');
+        });
+        // حفظ الخطأ تلقائياً
+        if(questionData && questionData.q && !dynamicTemplates[activeSub]) {
+            ErrorManager.save({
+                subject: activeSub,
+                subjectName: subjectsData[activeSub] || activeSub,
+                question: questionData.q,
+                userAnswer: v,
+                correctAnswer: a
+            });
+        }
     }
     setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
   }
 
   function runTimer() {
-    let w = 100; clearInterval(timerObj);
+    let w = 100;
+    clearInterval(timerObj);
     timerObj = setInterval(() => {
-        w -= 0.5; document.getElementById('timer-fill').style.width = w + "%";
-        if(w <= 0) { lock = true; document.getElementById('feedback').innerText = "⏰ انتهى الوقت!"; setTimeout(() => { qIndex++; loadQuestion(); }, 1500); clearInterval(timerObj); }
+        w -= 0.5;
+        document.getElementById('timer-fill').style.width = w + "%";
+        if(w <= 0) {
+            lock = true;
+            document.getElementById('feedback').innerText = "⏰ انتهى الوقت!";
+            setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+            clearInterval(timerObj);
+        }
     }, 50);
   }
 
-  function finishGame() { 
-    showSection('game-result'); 
+  /* تم تعديل finishGame لحفظ التقدم */
+  function finishGame() {
+    showSection('game-result');
     document.getElementById('final-score').innerText = `${score}/${currentQs.length}`;
     const msg = score >= 4 ? "ممتاز! أنت جاهز للبيام 🏆" : "لا بأس، واصل المراجعة وستتحسن 📚";
     document.getElementById('score-msg').innerText = msg;
+
+    // حفظ التقدم
+    ProgressManager.recordGame(activeSub, score, currentQs.length);
+    updateHeaderProgress();
+    renderProgressHome();
+    showToast("💾 تم حفظ تقدمك!", "var(--success-color)");
   }
 
+  /* العد التنازلي */
   const target = new Date("May 19, 2026 08:00:00").getTime();
   setInterval(() => {
     const diff = target - new Date().getTime();
@@ -635,7 +868,299 @@
     }
   }, 1000);
 
-  window.onload = initApp;
+  /* ============================================================
+     ميزة 7 — توست ذكي
+  ============================================================ */
+  let toastTimer = null;
+  function showToast(msg, color) {
+    color = color || "var(--primary-color)";
+    const t = document.getElementById('smart-toast');
+    t.innerText = msg;
+    t.style.background = color;
+    t.style.display = "block";
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.style.display = "none"; }, 3000);
+  }
+
+  /* ============================================================
+     ميزة 1 — نظام حفظ الأخطاء (ErrorManager)
+  ============================================================ */
+  const ErrorManager = (function() {
+    const KEY = 'bem_mistakes';
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+      catch(e) { return []; }
+    }
+
+    function save(errorObj) {
+      const list = load();
+      // تجنب التكرار
+      const exists = list.some(m => m.question === errorObj.question && m.subject === errorObj.subject);
+      if(exists) return;
+      errorObj.date = new Date().toLocaleDateString('ar-DZ');
+      list.unshift(errorObj);
+      if(list.length > 50) list.pop(); // حد أقصى
+      localStorage.setItem(KEY, JSON.stringify(list));
+    }
+
+    function remove(index) {
+      const list = load();
+      list.splice(index, 1);
+      localStorage.setItem(KEY, JSON.stringify(list));
+    }
+
+    function clearAll() {
+      localStorage.removeItem(KEY);
+    }
+
+    function render() {
+      const list = load();
+      const container = document.getElementById('mistakes-list');
+      if(!container) return;
+      if(list.length === 0) {
+        container.innerHTML = '<div class="mistakes-empty">🎉 لا توجد أخطاء محفوظة!<br><small>أخطاؤك تُحفظ تلقائياً عند الإجابة الخاطئة</small></div>';
+        return;
+      }
+      container.innerHTML = list.map((m, i) => `
+        <div class="mistake-card fade-in">
+          <div class="mistake-meta">📚 ${m.subjectName || m.subject} — ${m.date || ''}</div>
+          <div class="mistake-q">${m.question}</div>
+          <div class="mistake-ans">
+            ❌ إجابتك: <span style="color:var(--danger-color)">${m.userAnswer}</span><br>
+            ✅ الصحيحة: <span style="color:var(--success-color)">${m.correctAnswer}</span>
+          </div>
+          <button class="del-mistake-btn" onclick="deleteMistake(${i})">🗑️ حذف</button>
+        </div>
+      `).join('');
+    }
+
+    return { save, remove, clearAll, render, load };
+  })();
+
+  function deleteMistake(index) {
+    ErrorManager.remove(index);
+    ErrorManager.render();
+    showToast("🗑️ تم حذف الخطأ", "var(--danger-color)");
+  }
+
+  function clearAllMistakes() {
+    if(confirm("مسح جميع الأخطاء المحفوظة؟")) {
+      ErrorManager.clearAll();
+      ErrorManager.render();
+      showToast("✅ تم مسح جميع الأخطاء", "var(--success-color)");
+    }
+  }
+
+  // تحديث صفحة أخطائي عند فتحها
+  const _origShowSection = showSection;
+
+  /* ============================================================
+     ميزة 3 — نظام التقدم (ProgressManager)
+  ============================================================ */
+  const ProgressManager = (function() {
+    const KEY = 'bem_progress';
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+      catch(e) { return {}; }
+    }
+
+    function recordGame(subject, score, total) {
+      const data = load();
+      if(!data[subject]) data[subject] = { games: 0, totalScore: 0, totalQs: 0, bestScore: 0 };
+      data[subject].games++;
+      data[subject].totalScore += score;
+      data[subject].totalQs += total;
+      if(score > data[subject].bestScore) data[subject].bestScore = score;
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
+
+    function getOverallPercent() {
+      const data = load();
+      const subjects = Object.keys(subjectsData);
+      if(subjects.length === 0) return 0;
+      let played = subjects.filter(s => data[s] && data[s].games > 0).length;
+      return Math.round((played / subjects.length) * 100);
+    }
+
+    function getSubjectPercent(subject) {
+      const data = load();
+      if(!data[subject] || data[subject].totalQs === 0) return 0;
+      return Math.round((data[subject].totalScore / data[subject].totalQs) * 100);
+    }
+
+    function resetAll() {
+      localStorage.removeItem(KEY);
+    }
+
+    return { recordGame, getOverallPercent, getSubjectPercent, resetAll, load };
+  })();
+
+  function updateHeaderProgress() {
+    const pct = ProgressManager.getOverallPercent();
+    const fill = document.getElementById('progress-bar-fill');
+    const label = document.getElementById('progress-label');
+    if(fill) fill.style.width = pct + '%';
+    if(label) label.innerText = `التقدم: ${pct}% من المواد`;
+  }
+
+  function buildProgressHTML() {
+    const subjects = Object.keys(subjectsData);
+    const data = ProgressManager.load();
+    return subjects.map(s => {
+      const pct = ProgressManager.getSubjectPercent(s);
+      const games = data[s] ? data[s].games : 0;
+      const best = data[s] ? data[s].bestScore : 0;
+      return `
+        <div class="progress-sub-row">
+          <span style="width:70px; font-weight:bold;">${subjectsData[s]}</span>
+          <div class="progress-sub-bar">
+            <div class="progress-sub-fill" style="width:${pct}%"></div>
+          </div>
+          <span style="width:45px; text-align:left;">${pct}%</span>
+          <span style="color:#999; font-size:11px;">${games > 0 ? games + ' تحدٍ' : 'لم تبدأ'}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function buildProgressTableHTML() {
+    const subjects = Object.keys(subjectsData);
+    const data = ProgressManager.load();
+    const rows = subjects.map(s => {
+      const pct = ProgressManager.getSubjectPercent(s);
+      const games = data[s] ? data[s].games : 0;
+      const best = data[s] ? data[s].bestScore + '/5' : '—';
+      return `
+        <tr>
+          <td style="font-weight:bold;">${subjectsData[s]}</td>
+          <td>${games > 0 ? games : '—'}</td>
+          <td>${best}</td>
+          <td>
+            <div style="background:#eee; border-radius:4px; height:10px; overflow:hidden; min-width:60px;">
+              <div style="height:100%; width:${pct}%; background:var(--success-color); border-radius:4px; transition:width 0.5s;"></div>
+            </div>
+            <small>${pct}%</small>
+          </td>
+          <td style="color:${games > 0 ? 'var(--success-color)' : '#aaa'}; font-weight:bold;">
+            ${games > 0 ? '✅ بدأت' : '⏳ لم تبدأ'}
+          </td>
+        </tr>
+      `;
+    }).join('');
+    return `
+      <table class="rev-table" style="min-width:100%;">
+        <thead>
+          <tr>
+            <th>المادة</th>
+            <th>التحديات</th>
+            <th>أفضل نتيجة</th>
+            <th>التقدم</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  function renderProgressHome() {
+    const pagebox = document.getElementById('progress-subjects-list-page');
+    if(pagebox) pagebox.innerHTML = buildProgressTableHTML();
+  }
+
+  /* ============================================================
+     ميزة 4 — نظام البحث
+  ============================================================ */
+  function doSearch(query) {
+    const resultsEl = document.getElementById('search-results');
+    const noResult = document.getElementById('search-no-result');
+    resultsEl.innerHTML = '';
+    noResult.style.display = 'none';
+
+    const q = query.trim();
+    if(q.length < 2) return;
+
+    const results = [];
+
+    // البحث في بنك الأسئلة
+    Object.keys(staticBank).forEach(subKey => {
+      const subName = subjectsData[subKey] || subKey;
+      staticBank[subKey].forEach(item => {
+        if(item.q.includes(q) || item.a.includes(q)) {
+          results.push({ subject: subName, question: item.q, answer: item.a, type: 'question' });
+        }
+      });
+    });
+
+    // البحث في أسماء المواد
+    Object.keys(subjectsData).forEach(k => {
+      if(subjectsData[k].includes(q)) {
+        results.push({ subject: subjectsData[k], question: 'اضغط لفتح مادة ' + subjectsData[k], answer: '', type: 'subject', key: k });
+      }
+    });
+
+    if(results.length === 0) {
+      noResult.style.display = 'block';
+      return;
+    }
+
+    resultsEl.innerHTML = results.slice(0, 20).map((r, i) => `
+      <div class="search-result-item" onclick="handleSearchClick(${i})">
+        <div class="res-subject">📚 ${r.subject}</div>
+        <div class="res-question">${r.question}</div>
+        ${r.answer ? `<div style="font-size:12px; color:var(--success-color); margin-top:4px;">✅ ${r.answer}</div>` : ''}
+      </div>
+    `).join('');
+
+    // حفظ مؤقت للنتائج للتفاعل
+    window._searchResults = results;
+  }
+
+  function handleSearchClick(i) {
+    const r = (window._searchResults || [])[i];
+    if(!r) return;
+    if(r.type === 'subject') {
+      showTerms(r.key, r.subject);
+    }
+  }
+
+  /* ============================================================
+     تحديث صفحة أخطائي عند الانتقال إليها
+  ============================================================ */
+  const _realShowSection = window.showSection;
+  // نعيد تعريف showSection لإضافة منطق إضافي بدون حذف الأصلي
+  const origShowSectionRef = showSection;
+  window.showSection = function(id) {
+    origShowSectionRef(id);
+    if(id === 'mistakes-page') {
+      ErrorManager.render();
+    }
+    if(id === 'study-progress-page') {
+      renderProgressHome();
+      updateHeaderProgress();
+    }
+  };
+
+  /* ============================================================
+     تحميل الإعدادات المحفوظة
+  ============================================================ */
+  function loadSavedSettings() {
+    if(localStorage.getItem('bem_dark') === '1') {
+      document.body.classList.add('dark-mode');
+      const cb = document.getElementById('dark-mode-checkbox');
+      if(cb) cb.checked = true;
+    }
+  }
+
+  /* ============================================================
+     بدء التطبيق
+  ============================================================ */
+  window.onload = function() {
+    loadSavedSettings();
+    initApp();
+  };
 </script>
 </body>
 </html>
